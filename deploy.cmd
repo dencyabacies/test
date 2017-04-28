@@ -74,7 +74,7 @@ IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
 
 :: Invoke Composer in the deployment directory
 echo Invoking composer install in deployment directory $DEPLOYMENT_TARGET
-php -d extension=php_intl.dll $DEPLOYMENT_TARGET/composer.phar install -v --prefer-dist --no-dev --optimize-autoloader --no-interaction
+php -d extension=php_intl.dll composer.phar install -v --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
 goto end
 

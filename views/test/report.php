@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
       "}";
     $token2 = "{" .
       "\"wid\":\"6e746957-8e57-41de-a5e3-204bf3d0dbd5\"," . // workspace id
-      "\"rid\":\"d6b73aa4-aef9-4256-a51a-824072b73b21\"," . // report id
+      "\"rid\":\"fd2bbc49-89f8-4070-bd37-c737b292d254\"," . // report id
       "\"wcn\":\"kevindanel\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
@@ -62,7 +62,7 @@ use yii\widgets\ActiveForm;
         (function () {
           document.getElementById('btnView').onclick = function() {
             var iframe = document.getElementById('ifrTile');
-            iframe.src = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId=d6b73aa4-aef9-4256-a51a-824072b73b21';
+            iframe.src = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId=fd2bbc49-89f8-4070-bd37-c737b292d254';
             iframe.onload = function() {
               var msgJson = {
                 action: "loadReport",

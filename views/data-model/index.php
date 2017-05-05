@@ -26,8 +26,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'm_id',
             'model_name',
-            'attributes',
-
+            [
+			'label'=>'Add data',
+			'format' => 'raw',
+			'value' => function($data){
+				return Html::a(Html::encode("Add"),'add-data?id='.$data->m_id);
+			}
+			],
+			
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

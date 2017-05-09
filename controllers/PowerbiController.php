@@ -79,7 +79,9 @@ class PowerbiController extends \yii\web\Controller
             "content-type: {$content_type}",
           ),
         ));
-
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+        
         $response = curl_exec($curl);
         $err = curl_error($curl);
        

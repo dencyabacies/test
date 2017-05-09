@@ -6,7 +6,7 @@ class PowerbiController extends \yii\web\Controller
 {
     public function actionConnect()
     {
-		
+		//test commit
         return $this->render('connect');
     }
 

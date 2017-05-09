@@ -28,6 +28,7 @@ class PowerbiController extends \yii\web\Controller
 			$params = "name={$workspace->workspace_name}";
                         //urlencode("name=test-lalith")
                         $response       = json_decode($this->doCurl($end_url,$access_key,$params,"application/x-www-form-urlencoded"));
+                        print_r($response);die;
                        // print_r($response->error);die;
                         if(isset($response->error)){
                             //flash error message
@@ -81,7 +82,7 @@ class PowerbiController extends \yii\web\Controller
 
         $response = curl_exec($curl);
         $err = curl_error($curl);
-
+       
         curl_close($curl);
         if ($err) {
           echo "cURL Error #:" . $err;

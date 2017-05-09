@@ -34,7 +34,7 @@ class Dataset extends \yii\db\ActiveRecord
         return [
             [['dataset_name', 'dataset_id', 'datasource_id', 'gateway_id'], 'string'],
             [['workspace_id'], 'integer'],
-            [['workspace_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workspaces::className(), 'targetAttribute' => ['workspace_id' => 'w_id']],
+            [['workspace_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workspace::className(), 'targetAttribute' => ['workspace_id' => 'w_id']],
         ];
     }
 

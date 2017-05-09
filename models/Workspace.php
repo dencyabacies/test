@@ -35,7 +35,7 @@ class Workspace extends \yii\db\ActiveRecord
         return [
             [['workspace_name', 'workspace_id'], 'string'],
             [['collection_id'], 'integer'],
-            [['collection_id'], 'exist', 'skipOnError' => true, 'targetClass' => Collection::className(), 'targetAttribute' => ['collection_id' => 'collection_id']],
+           // [['collection_id'], 'exist', 'skipOnError' => true, 'targetClass' => Collection::className(), 'targetAttribute' => ['collection_id' => 'collection_id']],
         ];
     }
 

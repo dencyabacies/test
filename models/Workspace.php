@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Collection;
 
 /**
  * This is the model class for table "workspaces".
@@ -34,7 +35,7 @@ class Workspace extends \yii\db\ActiveRecord
         return [
             [['workspace_name', 'workspace_id'], 'string'],
             [['collection_id'], 'integer'],
-            [['collection_id'], 'exist', 'skipOnError' => true, 'targetClass' => Collections::className(), 'targetAttribute' => ['collection_id' => 'collection_id']],
+            [['collection_id'], 'exist', 'skipOnError' => true, 'targetClass' => Collection::className(), 'targetAttribute' => ['collection_id' => 'collection_id']],
         ];
     }
 
@@ -56,7 +57,7 @@ class Workspace extends \yii\db\ActiveRecord
      */
     public function getDatasets()
     {
-        return $this->hasMany(Datasets::className(), ['workspace_id' => 'w_id']);
+        return $this->hasMany(Dataset::className(), ['workspace_id' => 'w_id']);
     }
 
     /**
@@ -64,7 +65,7 @@ class Workspace extends \yii\db\ActiveRecord
      */
     public function getReports()
     {
-        return $this->hasMany(Reports::className(), ['workspace_id' => 'w_id']);
+        return $this->hasMany(Report::className(), ['workspace_id' => 'w_id']);
     }
 
     /**
@@ -72,6 +73,6 @@ class Workspace extends \yii\db\ActiveRecord
      */
     public function getCollection()
     {
-        return $this->hasOne(Collections::className(), ['collection_id' => 'collection_id']);
+        return $this->hasOne(Collection::className(), ['collection_id' => 'collection_id']);
     }
 }

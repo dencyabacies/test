@@ -18,7 +18,8 @@ use Yii;
  */
 class Dataset extends \yii\db\ActiveRecord
 {
-    /**
+    public $prefix;
+	/**
      * @inheritdoc
      */
     public static function tableName()
@@ -35,6 +36,7 @@ class Dataset extends \yii\db\ActiveRecord
             [['dataset_name', 'dataset_id', 'datasource_id', 'gateway_id'], 'string'],
             [['workspace_id'], 'integer'],
             [['workspace_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workspace::className(), 'targetAttribute' => ['workspace_id' => 'w_id']],
+			['prefix', 'safe']
         ];
     }
 

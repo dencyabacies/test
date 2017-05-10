@@ -4,10 +4,12 @@ namespace app\controllers;
 
 use Yii;
 use app\models\DataModel;
+use app\models\ImportForm;
 use app\models\search\DataModel as DataModelSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * DataModelController implements the CRUD actions for DataModel model.
@@ -77,7 +79,47 @@ class DataModelController extends Controller
             ]);
         }
     }
-
+	public function actionImport(){
+		
+		$model = new ImportForm();
+		
+		if ($model->load(Yii::$app->request->post())) {
+			set_time_limit(0);
+			$model->file = UploadedFile::getInstance($model, 'file');
+			if ($model->upload()) {
+                // file is uploaded successfully
+				$data = \moonland\phpexcel\Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
+					'setFirstRecordAsKeys' => true, 
+					'setIndexSheetByName' => true, 
+				]);
+				foreach($data as $key=>$sheet){
+					$datamodel = new DataModel();
+					$datamodel->model_name = $model->prefix.$key;
+					//$datamodel->prefix = $model->prefix;
+					$headers = $sheet[0];
+					$attributes = [];
+					foreach($headers as $header=>$value){
+						if((strtolower($header) != 'id') && $header!='')
+							$attributes[] = ['field_name'=>$header,'field_type'=>'text'];
+					}
+					$datamodel->attributes = serialize($attributes);
+					if($datamodel->save()){
+						// save data too
+					}
+				}
+				print_r($data);die;
+                return;
+            }
+			//foreach sheet
+			//{new datamodel, input sample data}
+			
+		}else{
+            return $this->render('import', [
+                'model' => $model,
+            ]);
+        }
+			
+	}
     /**
      * Updates an existing DataModel model.
      * If update is successful, the browser will be redirected to the 'view' page.

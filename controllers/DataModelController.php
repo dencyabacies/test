@@ -92,19 +92,26 @@ class DataModelController extends Controller
 					'setFirstRecordAsKeys' => true, 
 					'setIndexSheetByName' => true, 
 				]);
-				foreach($data as $key=>$sheet){
+				foreach($data as $key=>$sheets){
 					$datamodel = new DataModel();
 					$datamodel->model_name = $model->prefix.$key;
 					//$datamodel->prefix = $model->prefix;
-					$headers = $sheet[0];
+					$headers = $sheets[0];
 					$attributes = [];
 					foreach($headers as $header=>$value){
-						if((strtolower($header) != 'id') && $header!='')
-							$attributes[] = ['field_name'=>$header,'field_type'=>'text'];
+						if($header!=''){
+							if((strtolower($header) != 'id'))
+								$attributes[] = ['field_name'=>$header,'field_type'=>'integer'];
+							else $attributes[] = ['field_name'=>$header,'field_type'=>'text'];							
+						}
 					}
 					$datamodel->attributes = serialize($attributes);
 					if($datamodel->save()){
 						// save data too
+						foreach($sheets as $header=>$data){
+							Yii::$app->db->createCommand()
+								->insert($datamodel->model_name, $data)->execute();
+						}
 					}
 				}
 				print_r($data);die;

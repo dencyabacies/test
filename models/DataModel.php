@@ -50,7 +50,7 @@ class DataModel extends \yii\db\ActiveRecord
 		parent::afterSave($insert, $changeAttributes);
 		$attributes = unserialize($this->attributes);	
 //print_r($attributes);	die;	
-		$columns = ['id' => 'pk'];
+		$columns = ['eq_id' => 'pk'];
 		foreach($attributes as $attribute){
 			$columns[$attribute['field_name']]=$attribute['field_type'];
 		}

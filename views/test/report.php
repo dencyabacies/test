@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="test-data-form">
 <?php
     // 1. power bi access key
-    $accesskey = "K+9mg/Lv0aXgSEfAPo7hJxZ0Pg1Y4zSWM6jsEntdYP66hREZQo+873W6v5CRLUYrjwlHOXJCE8zR1Hwq4nHRog==";
+    $accesskey = "o7rSltTDXbKMlWlj3XhAf8KLjq1Tfprs3HDlhXG8En6qdxbvT+s8a4g8+z29p3vCA41ZgZg+qhjtmUvKdCCBJA==";
 
     // 2. construct input value
     $token1 = "{" .
@@ -19,9 +19,9 @@ use yii\widgets\ActiveForm;
       "\"alg\":\"HS256\"" .
       "}";
     $token2 = "{" .
-      "\"wid\":\"6e746957-8e57-41de-a5e3-204bf3d0dbd5\"," . // workspace id
-      "\"rid\":\"fd2bbc49-89f8-4070-bd37-c737b292d254\"," . // report id
-      "\"wcn\":\"kevindanel\"," . // workspace collection name
+      "\"wid\":\"37380bc1-dd47-4c95-8dbd-5efecafc8b26\"," . // workspace id
+      "\"rid\":\"ce558be6-aaf9-4bee-b344-6db7754e572b\"," . // report id
+      "\"wcn\":\"washington\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
       "\"aud\":\"https://analysis.windows.net/powerbi/api\"," .
@@ -62,7 +62,7 @@ use yii\widgets\ActiveForm;
         (function () {
           document.getElementById('btnView').onclick = function() {
             var iframe = document.getElementById('ifrTile');
-            iframe.src = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId=fd2bbc49-89f8-4070-bd37-c737b292d254';
+            iframe.src = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId=ce558be6-aaf9-4bee-b344-6db7754e572b';
             iframe.onload = function() {
               var msgJson = {
                 action: "loadReport",

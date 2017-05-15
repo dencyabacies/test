@@ -66,58 +66,27 @@ use yii\widgets\ActiveForm;
             var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId+'"&$filter=CountryRegion/CountryRegionName eq \'United States\'";';
 			var $defaultPageReportContainer = $('#reportContainer');
 			
-/* 			var defaultFilter =  models.AdvancedFilter({
+			var defaultFilter =  models.AdvancedFilter({
 				  table: "customer_Risk",
-				  column: "eq_id"
+				  column: "eq_customer_id"
 				}, "And", [
 				  {
-					operator: "In",
-					values: [1]
+					operator: "Is",
+					value: 2
 				  }
-				]); */
-			var advancedFilter = new window['powerbi-client'].models.AdvancedFilter ({
-				  table: "customer_Risk",
-				  column: "eq_customer_id"
-				}, "And", [
-				  {
-					operator: "Is",
-					value: "<?=\Yii::$app->user->id?>"
-				  },
-				
 				]);
-			var advancedFilter1 = new window['powerbi-client'].models.AdvancedFilter ({
-				  table: "customer_Budget",
-				  column: "eq_customer_id"
-				}, "And", [
-				  {
-					operator: "Is",
-					value: "<?=\Yii::$app->user->id?>"
-				  },
-				
-				]);
-			var advancedFilter2 = new window['powerbi-client'].models.AdvancedFilter ({
-				  table: "customer_MockupHeatmap",
-				  column: "eq_customer_id"
-				}, "And", [
-				  {
-					operator: "Is",
-					value: "<?=\Yii::$app->user->id?>"
-				  },
-				
-				]);
-			//var advancedFilter1= new window['powerbi-client'].models.AdvancedFilter ();
-			var defaultFilters = [advancedFilter,advancedFilter1,advancedFilter2];
+
+		  var defaultFilters = [defaultFilter];
 		  
             var config = {
                 type: 'report',
                 accessToken: embedToken,
                 embedUrl: embedUrl,
                 id: reportId,
-				filters: defaultFilters,
-				//oDataFilter: "customer_Budget/eq_customer_id eq '1'",
+				filter: defaultFilters,
                 settings: {
-                    filterPaneEnabled: false,
-                    navContentPaneEnabled: false
+                    filterPaneEnabled: true,
+                    navContentPaneEnabled: true
                 }
             };
 

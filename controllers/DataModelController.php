@@ -100,21 +100,27 @@ class DataModelController extends Controller
 					$attributes = [];
 					foreach($headers as $header=>$value){
 						if($header!=''){
-							if((strtolower($header) != 'id'))
+							if((strtolower($header) == 'id'))
 								$attributes[] = ['field_name'=>$header,'field_type'=>'integer'];
 							else $attributes[] = ['field_name'=>$header,'field_type'=>'text'];							
 						}
 					}
 					$datamodel->attributes = serialize($attributes);
-					if($datamodel->save()){
+					//if($datamodel->save()){
 						// save data too
 						foreach($sheets as $header=>$data){
-							Yii::$app->db->createCommand()
+							foreach($data as $key=>$d){
+								//eliminate the null keys
+								if($key == '')
+									unset($data[$key]);
+							}
+							$data['eq_customer_id'] = \Yii::$app->user->id;
+							\Yii::$app->db->createCommand()
 								->insert($datamodel->model_name, $data)->execute();
 						}
-					}
+					//}
 				}
-				print_r($data);die;
+				//print_r($data);die;
                 return;
             }
 			//foreach sheet

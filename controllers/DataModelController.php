@@ -271,7 +271,7 @@ class DataModelController extends Controller
 			\Yii::$app->db->createCommand()
 				->insert(\Yii::$app->request->post()['table_name'], \Yii::$app->request->post()['attributes'])
 				->execute();	
-			return true;				
+			return redirect(\Yii::$app->request->post()['redirect_url']);				
 		}
 		else return false;
 

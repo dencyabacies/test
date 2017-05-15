@@ -265,7 +265,7 @@ class DataModelController extends Controller
 	 * Return boolean
 	 */
 	public function actionSaveData(){
-		$this->csrf
+		//$this->csrf
 		if(\Yii::$app->request->post()){
 			
 			\Yii::$app->db->createCommand()

@@ -258,8 +258,14 @@ class DataModelController extends Controller
 		]);
 		
 	}
+	
+	/*
+	 * This is for API
+	 * Params: dashboard ID
+	 * Return boolean
+	 */
 	public function actionSaveData(){
-		
+		$this->csrf
 		if(\Yii::$app->request->post()){
 			
 			\Yii::$app->db->createCommand()
@@ -283,5 +289,16 @@ class DataModelController extends Controller
 			'model' => $model
 		]);
 		
+	}
+	/**
+	 * @inheritdoc
+	 */
+	public function beforeAction($action)
+	{            
+		if ($action->id == 'save-data') {
+			$this->enableCsrfValidation = false;
+		}
+
+		return parent::beforeAction($action);
 	}
 }

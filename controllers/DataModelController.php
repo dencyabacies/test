@@ -258,7 +258,18 @@ class DataModelController extends Controller
 		]);
 		
 	}
-	
+	public function actionSaveData(){
+		
+		if(\Yii::$app->request->post()){
+			
+			\Yii::$app->db->createCommand()
+				->insert(\Yii::$app->request->post()['table_name'], \Yii::$app->request->post()['attributes'])
+				->execute();	
+			return true;				
+		}
+		else return false;
+
+	}
 	public function actionAddForm($id){
 		
 		$model = $this->findModel($id);

@@ -39,7 +39,7 @@ class Dataset extends \yii\db\ActiveRecord
             [['dataset_name', 'dataset_id', 'datasource_id', 'gateway_id'], 'string'],
             [['workspace_id','collection_id'], 'integer'],
             [['workspace_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workspace::className(), 'targetAttribute' => ['workspace_id' => 'w_id']],
-			['prefix', 'safe']
+			['prefix', 'safe'],
 			[['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'pbix'],
 			[['dataset_name','workspace_id','collection_id','file'],'required'],
 

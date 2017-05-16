@@ -3,16 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Workspace;
-use app\models\search\Workspace as WorkspaceSearch;
+use app\models\Dataset;
+use app\models\search\Dataset as DatasetSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * WorkspaceController implements the CRUD actions for Workspace model.
+ * DatasetController implements the CRUD actions for Dataset model.
  */
-class WorkspaceController extends Controller
+class DatasetController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,15 +30,14 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Lists all Workspace models.
+     * Lists all Dataset models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel  = new WorkspaceSearch();
+        $searchModel = new DatasetSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		(isset($_POST['collection_id']))?$dataProvider->query->andFilterWhere(['collection_id'=>$_POST['collection_id']]):'';
-
+		(isset($_POST['w_id']))?$dataProvider->query->andFilterWhere(['workspace_id'=>$_POST['w_id']]):'';
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -46,7 +45,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Displays a single Workspace model.
+     * Displays a single Dataset model.
      * @param integer $id
      * @return mixed
      */
@@ -58,16 +57,16 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Creates a new Workspace model.
+     * Creates a new Dataset model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Workspace();
+        $model = new Dataset();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->w_id]);
+            return $this->redirect(['view', 'id' => $model->s_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -76,7 +75,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Updates an existing Workspace model.
+     * Updates an existing Dataset model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -86,7 +85,7 @@ class WorkspaceController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->w_id]);
+            return $this->redirect(['view', 'id' => $model->s_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -95,7 +94,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Deletes an existing Workspace model.
+     * Deletes an existing Dataset model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -108,35 +107,18 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Finds the Workspace model based on its primary key value.
+     * Finds the Dataset model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Workspace the loaded model
+     * @return Dataset the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Workspace::findOne($id)) !== null) {
+        if (($model = Dataset::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-	
-	public function actionWorkspaceslist($collection_id)
-	{
-		$workspace  = Workspace::find()->where(['collection_id'=>$collection_id])->orderBy('workspace_name ASC')->all();
-        $data	='<option value="0">Select Workspace</option>';
-        if($workspace)
-        {
-            foreach ($workspace as $result){
-                $data.="<option value='".$result->w_id."'>".$result->workspace_name."</option>";
-            }
-        }
-        else
-        {
-            $data.="<option value='0'>--</option>";
-        }
-        echo $data;
-	}
 }

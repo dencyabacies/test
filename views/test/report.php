@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
       "}";
     $token2 = "{" .
       "\"wid\":\"37380bc1-dd47-4c95-8dbd-5efecafc8b26\"," . // workspace id
-      "\"rid\":\"e5a9d88b-d5a1-4798-8ebc-b220a6dd49af\"," . // report id
+      "\"rid\":\"d42f920c-7176-4f81-8410-47ff9c7e7573\"," . // report id
       "\"wcn\":\"washington\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
@@ -55,15 +55,15 @@ use yii\widgets\ActiveForm;
 
 
 
-<div id="reportContainer"  style="height:800px"></div>
+<div id="reportContainer"  style="height:530px"></div>
     <script src="http://localhost/powerbi/web/js/node_modules/powerbi-client/dist/powerbi.min.js"></script>
     <script>
         (function () {
 			var models = window['powerbi-client'].models;
  			//console.log(models);
             var embedToken = '<?=$apptoken?>';
-            var reportId = 'e5a9d88b-d5a1-4798-8ebc-b220a6dd49af';
-            var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId+'"&$filter=CountryRegion/CountryRegionName eq \'United States\'";';
+            var reportId = 'd42f920c-7176-4f81-8410-47ff9c7e7573';
+            var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId;
 			var $defaultPageReportContainer = $('#reportContainer');
 			
 /* 			var defaultFilter =  models.AdvancedFilter({

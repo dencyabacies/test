@@ -19,17 +19,36 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Workspace', ['powerbi/create-workspace'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        'dataProvider' 	=> $dataProvider,
+        'filterModel' 	=> $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             //'w_id',
-            'workspace_name',
+            //'workspace_name',
+			[
+				'label' =>'workspace name',
+				'format'=>'raw',
+				'value' =>function($data){
+					return Html::a($data->workspace_name,['dataset/index'],[
+					'data'=>[
+						'method'=>'POST',
+						'params'=>['w_id'=>$data->w_id],
+					]
+					]);
+				}
+			],
             'workspace_id',
             //'collection_id',
-            'collection.collection_name'
+            'collection.collection_name',
             //['class' => 'yii\grid\ActionColumn'],
+			[
+				'label'=>'url',
+				'format'=>'raw',
+				'value'=>function ($data) {
+					return Html::a('Generate',['reports/create-report','w_id'=>$data->w_id]);
+				},
+			]
         ],
     ]); ?>
 </div>

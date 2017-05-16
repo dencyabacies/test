@@ -3,16 +3,18 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Workspace;
-use app\models\search\Workspace as WorkspaceSearch;
+use app\models\Reports;
+use app\models\search\ReportsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Workspace;
+use app\models\Collection;
 
 /**
- * WorkspaceController implements the CRUD actions for Workspace model.
+ * ReportsController implements the CRUD actions for Reports model.
  */
-class WorkspaceController extends Controller
+class ReportsController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,14 +32,13 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Lists all Workspace models.
+     * Lists all Reports models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel  = new WorkspaceSearch();
+        $searchModel = new ReportsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		(isset($_POST['collection_id']))?$dataProvider->query->andFilterWhere(['collection_id'=>$_POST['collection_id']]):'';
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -46,7 +47,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Displays a single Workspace model.
+     * Displays a single Reports model.
      * @param integer $id
      * @return mixed
      */
@@ -58,16 +59,16 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Creates a new Workspace model.
+     * Creates a new Reports model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Workspace();
+        $model = new Reports();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->w_id]);
+            return $this->redirect(['view', 'id' => $model->r_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -76,7 +77,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Updates an existing Workspace model.
+     * Updates an existing Reports model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -86,7 +87,7 @@ class WorkspaceController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->w_id]);
+            return $this->redirect(['view', 'id' => $model->r_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -95,7 +96,7 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Deletes an existing Workspace model.
+     * Deletes an existing Reports model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -108,35 +109,38 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Finds the Workspace model based on its primary key value.
+     * Finds the Reports model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Workspace the loaded model
+     * @return Reports the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Workspace::findOne($id)) !== null) {
+        if (($model = Reports::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 	
-	public function actionWorkspaceslist($collection_id)
+	public function actionCreateReport($w_id)
 	{
-		$workspace  = Workspace::find()->where(['collection_id'=>$collection_id])->orderBy('workspace_name ASC')->all();
-        $data	='<option value="0">Select Workspace</option>';
-        if($workspace)
-        {
-            foreach ($workspace as $result){
-                $data.="<option value='".$result->w_id."'>".$result->workspace_name."</option>";
-            }
-        }
-        else
-        {
-            $data.="<option value='0'>--</option>";
-        }
-        echo $data;
+		$model  	= new Reports();	
+		$workspace  = Workspace::findOne($w_id);
+		$collection = Collection::findOne($workspace->collection_id);
+		
+		$url="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/reports";
+		
+		$response = json_decode($workspace->doCurl_GET($url,$collection->AppKey));
+		foreach($response->value as $res){
+			$model->report_name = $res->name;
+			$model->report_guid = $res->id;
+			$model->web_url		= $res->webUrl;
+			$model->embed_url	= $res->embedUrl;
+			$model->workspace_id= $w_id;
+			$model->save();
+		}
+		return $this->redirect(['workspace/index']);	
 	}
 }

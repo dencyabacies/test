@@ -18,6 +18,8 @@ use Yii;
  */
 class Dataset extends \yii\db\ActiveRecord
 {
+	public $collection_id;
+	public $file;
     /**
      * @inheritdoc
      */
@@ -33,8 +35,10 @@ class Dataset extends \yii\db\ActiveRecord
     {
         return [
             [['dataset_name', 'dataset_id', 'datasource_id', 'gateway_id'], 'string'],
-            [['workspace_id'], 'integer'],
+            [['workspace_id','collection_id'], 'integer'],
             [['workspace_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workspace::className(), 'targetAttribute' => ['workspace_id' => 'w_id']],
+			[['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'pbix'],
+			[['dataset_name','workspace_id','collection_id','file'],'required'],
         ];
     }
 
@@ -44,12 +48,12 @@ class Dataset extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            's_id' => 'S ID',
-            'dataset_name' => 'Dataset Name',
-            'dataset_id' => 'Dataset ID',
-            'workspace_id' => 'Workspace ID',
+            's_id' 			=> 'S ID',
+            'dataset_name' 	=> 'Dataset Name',
+            'dataset_id' 	=> 'Dataset ID',
+            'workspace_id' 	=> 'Workspace ID',
             'datasource_id' => 'Datasource ID',
-            'gateway_id' => 'Gateway ID',
+            'gateway_id' 	=> 'Gateway ID',
         ];
     }
 
@@ -58,6 +62,6 @@ class Dataset extends \yii\db\ActiveRecord
      */
     public function getWorkspace()
     {
-        return $this->hasOne(Workspaces::className(), ['w_id' => 'workspace_id']);
+        return $this->hasOne(Workspace::className(), ['w_id' => 'workspace_id']);
     }
 }

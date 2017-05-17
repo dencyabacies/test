@@ -42,9 +42,6 @@ class Dataset extends \yii\db\ActiveRecord
 			[['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'pbix'],
 			[['dataset_name','workspace_id','collection_id','file'],'required'],
 			['prefix', 'safe']
-			['prefix', 'safe'],
-			[['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'pbix'],
-			[['dataset_name','workspace_id','collection_id','file'],'required'],
         ];
     }
 

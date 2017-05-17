@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="test-data-form">
 <?php
     // 1. power bi access key
-    $accesskey = "K+9mg/Lv0aXgSEfAPo7hJxZ0Pg1Y4zSWM6jsEntdYP66hREZQo+873W6v5CRLUYrjwlHOXJCE8zR1Hwq4nHRog==";
+    $accesskey = "o7rSltTDXbKMlWlj3XhAf8KLjq1Tfprs3HDlhXG8En6qdxbvT+s8a4g8+z29p3vCA41ZgZg+qhjtmUvKdCCBJA==";
 
     // 2. construct input value
     $token1 = "{" .
@@ -19,9 +19,9 @@ use yii\widgets\ActiveForm;
       "\"alg\":\"HS256\"" .
       "}";
     $token2 = "{" .
-      "\"wid\":\"6e746957-8e57-41de-a5e3-204bf3d0dbd5\"," . // workspace id
-      "\"rid\":\"fd2bbc49-89f8-4070-bd37-c737b292d254\"," . // report id
-      "\"wcn\":\"kevindanel\"," . // workspace collection name
+      "\"wid\":\"37380bc1-dd47-4c95-8dbd-5efecafc8b26\"," . // workspace id
+      "\"rid\":\"e5a9d88b-d5a1-4798-8ebc-b220a6dd49af\"," . // report id
+      "\"wcn\":\"washington\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
       "\"aud\":\"https://analysis.windows.net/powerbi/api\"," .
@@ -53,26 +53,78 @@ use yii\widgets\ActiveForm;
     }
     ?>
 
-      <button id="btnView">View Report !</button>
-      <div id="divView">
-        <iframe id="ifrTile" width="100%" height="800"></iframe>
-      </div>
-	</div>
-      <script>
+
+
+<div id="reportContainer"  style="height:800px"></div>
+    <script src="http://localhost/powerbi/web/js/node_modules/powerbi-client/dist/powerbi.min.js"></script>
+    <script>
         (function () {
-          document.getElementById('btnView').onclick = function() {
-            var iframe = document.getElementById('ifrTile');
-            iframe.src = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId=fd2bbc49-89f8-4070-bd37-c737b292d254';
-            iframe.onload = function() {
-              var msgJson = {
-                action: "loadReport",
-                accessToken: "<?=$apptoken?>",
-                height: 500,
-                width: 722
-              };
-              var msgTxt = JSON.stringify(msgJson);
-              iframe.contentWindow.postMessage(msgTxt, "*");
+			var models = window['powerbi-client'].models;
+ 			//console.log(models);
+            var embedToken = '<?=$apptoken?>';
+            var reportId = 'e5a9d88b-d5a1-4798-8ebc-b220a6dd49af';
+            var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId+'"&$filter=CountryRegion/CountryRegionName eq \'United States\'";';
+			var $defaultPageReportContainer = $('#reportContainer');
+			
+/* 			var defaultFilter =  models.AdvancedFilter({
+				  table: "customer_Risk",
+				  column: "eq_id"
+				}, "And", [
+				  {
+					operator: "In",
+					values: [1]
+				  }
+				]); */
+			var advancedFilter = new window['powerbi-client'].models.AdvancedFilter ({
+				  table: "customer_Risk",
+				  column: "eq_customer_id"
+				}, "And", [
+				  {
+					operator: "Is",
+					value: "<?=\Yii::$app->user->id?>"
+				  },
+				
+				]);
+			var advancedFilter1 = new window['powerbi-client'].models.AdvancedFilter ({
+				  table: "customer_Budget",
+				  column: "eq_customer_id"
+				}, "And", [
+				  {
+					operator: "Is",
+					value: "<?=\Yii::$app->user->id?>"
+				  },
+				
+				]);
+			var advancedFilter2 = new window['powerbi-client'].models.AdvancedFilter ({
+				  table: "customer_MockupHeatmap",
+				  column: "eq_customer_id"
+				}, "And", [
+				  {
+					operator: "Is",
+					value: "<?=\Yii::$app->user->id?>"
+				  },
+				
+				]);
+			//var advancedFilter1= new window['powerbi-client'].models.AdvancedFilter ();
+			var defaultFilters = [advancedFilter,advancedFilter1,advancedFilter2];
+		  
+            var config = {
+                type: 'report',
+                accessToken: embedToken,
+                embedUrl: embedUrl,
+                id: reportId,
+				filters: defaultFilters,
+				//oDataFilter: "customer_Budget/eq_customer_id eq '1'",
+                settings: {
+                    filterPaneEnabled: false,
+                    navContentPaneEnabled: false
+                }
             };
-          };
-        }());
-      </script>
+
+             powerbi.embed(document.getElementById('reportContainer'), config);
+
+		
+		})();
+    </script>
+
+

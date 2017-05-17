@@ -8,6 +8,9 @@ use app\models\search\Workspace as WorkspaceSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Collection;
+use app\models\Dataset;
+use app\models\Reports;
 
 /**
  * WorkspaceController implements the CRUD actions for Workspace model.
@@ -37,7 +40,7 @@ class WorkspaceController extends Controller
     {
         $searchModel  = new WorkspaceSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		(isset($_POST['collection_id']))?$dataProvider->query->andFilterWhere(['collection_id'=>$_POST['collection_id']]):'';
+		isset($_REQUEST['collection_id'])?$dataProvider->query->andFilterWhere(['collection_id'=>$_REQUEST['collection_id']]):'';
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -95,13 +98,15 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Deletes an existing Workspace model.
+     * Deletes an existing Workspace model and also dataset and reports that are connected to this.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
+		Dataset::findOne(['workspace_id'=>$id])->delete();		
+		Reports::findOne(['workspace_id'=>$id])->delete();
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -123,6 +128,11 @@ class WorkspaceController extends Controller
         }
     }
 	
+	/**
+	*
+	* @return the dropdown list of requested collection_id
+	*/
+	
 	public function actionWorkspaceslist($collection_id)
 	{
 		$workspace  = Workspace::find()->where(['collection_id'=>$collection_id])->orderBy('workspace_name ASC')->all();
@@ -138,5 +148,35 @@ class WorkspaceController extends Controller
             $data.="<option value='0'>--</option>";
         }
         echo $data;
+	}
+	
+	/**
+	* Syncronize all the data which has been occured in the portal.azure.com
+	* And get stores in this model.
+	*/
+	public function actionSync()
+	{
+		$collection= Collection::findOne(['collection_id'=>$_REQUEST['collection_id']]);
+		$workspaces		= Workspace::find()->where(['collection_id'=>$_REQUEST['collection_id']])->all();
+		$url = 'https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces';
+		$response = json_decode(Workspace::doCurl_GET($url,$collection->AppKey)); 
+
+		$workspace_id = array();
+		foreach($workspaces as $work){
+			$workspace_id[]=$work->workspace_id;
+		}
+		if(isset($response->value)){
+		foreach($response->value as $coll){
+			if(!in_array($coll->workspaceId,$workspace_id)){
+			$workspace = new Workspace;
+			$workspace->workspace_name 	= $coll->displayName;
+			$workspace->workspace_id	= $coll->workspaceId;
+			$workspace->collection_id	= $_REQUEST['collection_id'];
+			$workspace->save();
+			}
+		}
+		}
+		return $this->redirect(['workspace/index','collection_id'=>$_REQUEST['collection_id']]);
+		
 	}
 }

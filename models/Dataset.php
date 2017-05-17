@@ -20,7 +20,10 @@ class Dataset extends \yii\db\ActiveRecord
 {
 	public $collection_id;
 	public $file;
-    /**
+	public $prefix;
+	
+    
+	/**
      * @inheritdoc
      */
     public static function tableName()
@@ -39,6 +42,7 @@ class Dataset extends \yii\db\ActiveRecord
             [['workspace_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workspace::className(), 'targetAttribute' => ['workspace_id' => 'w_id']],
 			[['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'pbix'],
 			[['dataset_name','workspace_id','collection_id','file'],'required'],
+			['prefix', 'safe']
         ];
     }
 

@@ -13,7 +13,8 @@ use Yii;
  */
 class DataModel extends \yii\db\ActiveRecord
 {
-    /**
+
+	/**
      * @inheritdoc
      */
     public static function tableName()
@@ -47,9 +48,10 @@ class DataModel extends \yii\db\ActiveRecord
 	
 	public function afterSave($insert, $changeAttributes) {
 		parent::afterSave($insert, $changeAttributes);
-		$attributes = unserialize($this->attributes);
-		
-		$columns = ['id' => 'pk'];
+		$attributes = unserialize($this->attributes);	
+//print_r($attributes);	die;	
+		$columns = ['eq_id' => 'pk','eq_customer_id' => 'integer'];
+		//$columns [];
 		foreach($attributes as $attribute){
 			$columns[$attribute['field_name']]=$attribute['field_type'];
 		}

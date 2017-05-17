@@ -55,7 +55,6 @@ use yii\widgets\ActiveForm;
 		</div>
 
 </div>
-
 <script>
 	var next = $(".field").length;
 	$(".addmore-button").click(function(){

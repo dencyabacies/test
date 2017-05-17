@@ -20,13 +20,15 @@ use yii\widgets\ActiveForm;
       "}";
     $token2 = "{" .
       "\"wid\":\"37380bc1-dd47-4c95-8dbd-5efecafc8b26\"," . // workspace id
-      "\"rid\":\"d42f920c-7176-4f81-8410-47ff9c7e7573\"," . // report id
+      "\"rid\":\"85885f28-1412-4692-b23e-486042a04791\"," . // report id
       "\"wcn\":\"washington\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
       "\"aud\":\"https://analysis.windows.net/powerbi/api\"," .
       "\"nbf\":" . date("U") . "," .
-      "\"exp\":" . date("U" , strtotime("+1 hour")) .
+	  "\"username\":".\Yii::$app->user->id."," .
+	  "\"roles\":\"customer_key\"," .
+	  "\"exp\":" . date("U" , strtotime("+1 hour")) .
       "}";
     $inputval = rfc4648_base64_encode($token1) .
       "." .
@@ -62,7 +64,7 @@ use yii\widgets\ActiveForm;
 			var models = window['powerbi-client'].models;
  			//console.log(models);
             var embedToken = '<?=$apptoken?>';
-            var reportId = 'd42f920c-7176-4f81-8410-47ff9c7e7573';
+            var reportId = '85885f28-1412-4692-b23e-486042a04791';
             var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId;
 			var $defaultPageReportContainer = $('#reportContainer');
 			
@@ -113,7 +115,7 @@ use yii\widgets\ActiveForm;
                 accessToken: embedToken,
                 embedUrl: embedUrl,
                 id: reportId,
-				filters: defaultFilters,
+				//filters: defaultFilters,
 				//oDataFilter: "customer_Budget/eq_customer_id eq '1'",
                 settings: {
                     filterPaneEnabled: false,

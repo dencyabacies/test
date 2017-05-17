@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn',
 				'buttons' => [
 				'delete'=>function($data){
-					return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete'],['data'=>[
+					return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete','id'=>$data->s_id],['data'=>[
 						'method'=>'POST',
 						'params'=>['w_id'=>$_REQUEST['w_id']],
 					]]);

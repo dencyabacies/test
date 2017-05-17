@@ -107,7 +107,7 @@ class WorkspaceController extends Controller
     {
 		$workspace	= Workspace ::find()->where(['w_id'=>$id])->one();
 		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
-		$dataset 	= Dataset::find->where(['workspace_id'=>$id])->all();
+		$dataset 	= Dataset::find()->where(['workspace_id'=>$id])->all();
 		
 		Dataset::findOne(['workspace_id'=>$id])->delete();		
 		Reports::findOne(['workspace_id'=>$id])->delete();

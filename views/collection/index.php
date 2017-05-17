@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value'=>function ($data) {
 					return Html::a($data->collection_name,['workspace/index'],[
 					'data'=>[
-						'method'=>'POST',
+						'method'=>'GET',
 						'params'=>['collection_id'=>$data->collection_id],
 					],
 					]);

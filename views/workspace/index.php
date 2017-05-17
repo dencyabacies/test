@@ -17,6 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Workspace', ['powerbi/create-workspace'], ['class' => 'btn btn-success']) ?>
+		<?= isset($_REQUEST['collection_id'])?Html::a('Sync', ['sync'], ['class' => 'btn btn-success','data'=>[
+			'method'=>'POST',
+			'params'=>['collection_id'=>$_REQUEST['collection_id']],
+		]]):'' ?>
     </p>
     <?= GridView::widget([
         'dataProvider' 	=> $dataProvider,
@@ -32,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value' =>function($data){
 					return Html::a($data->workspace_name,['dataset/index'],[
 					'data'=>[
-						'method'=>'POST',
+						'method'=>'GET',
 						'params'=>['w_id'=>$data->w_id],
 					]
 					]);

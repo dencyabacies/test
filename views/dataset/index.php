@@ -17,6 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Dataset', ['powerbi/create-dataset'], ['class' => 'btn btn-success']) ?>
+		<?= isset($_REQUEST['w_id'])?Html::a('Sync', ['sync'], ['class' => 'btn btn-success','data'=>[
+			'method'=>'POST',
+			'params'=>['w_id'=>$_REQUEST['w_id']],
+		]]):'' ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

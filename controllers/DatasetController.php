@@ -105,8 +105,8 @@ class DatasetController extends Controller
     public function actionDelete($id)
     {
 		$dataset 	= Dataset::findOne(['s_id'=>$id]);
-		$workspace	= Workspace::findOne(['w_id'=>$dataset->workspace_id]);
-		$collection	= Collection::findOne(['collection_id'=>$workspace->collection_id]);
+		$workspace	= Workspace::find()->where(['w_id'=>$dataset->workspace_id])->one();
+		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
 		$report = Reports::find()->where(['workspace_id'=>$dataset->workspace_id])->exists();
 		($report)?Reports::findOne(['workspace_id'=>$dataset->workspace_id])->delete():'';
         $this->findModel($id)->delete();

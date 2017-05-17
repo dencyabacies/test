@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
       "}";
     $token2 = "{" .
       "\"wid\":\"37380bc1-dd47-4c95-8dbd-5efecafc8b26\"," . // workspace id
-      "\"rid\":\"85885f28-1412-4692-b23e-486042a04791\"," . // report id
+      "\"rid\":\"5a03df7e-09e3-475c-853d-e1379990437b\"," . // report id
       "\"wcn\":\"washington\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
@@ -64,7 +64,7 @@ use yii\widgets\ActiveForm;
 			var models = window['powerbi-client'].models;
  			//console.log(models);
             var embedToken = '<?=$apptoken?>';
-            var reportId = '85885f28-1412-4692-b23e-486042a04791';
+            var reportId = '5a03df7e-09e3-475c-853d-e1379990437b';
             var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId;
 			var $defaultPageReportContainer = $('#reportContainer');
 			

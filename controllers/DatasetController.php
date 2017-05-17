@@ -108,13 +108,13 @@ class DatasetController extends Controller
 		$workspace	= Workspace::find()->where(['w_id'=>$dataset->workspace_id])->one();
 		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
 		$report = Reports::find()->where(['workspace_id'=>$dataset->workspace_id])->exists();
-		($report)?Reports::findOne(['workspace_id'=>$dataset->workspace_id])->delete():'';
-        $this->findModel($id)->delete();
+		//($report)?Reports::findOne(['workspace_id'=>$dataset->workspace_id])->delete():'';
+        //$this->findModel($id)->delete();
 		
 		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$dataset->dataset_id;
-		$workspace->doCurl_DELETE($url,$collection->AppKey);
+		//$workspace->doCurl_DELETE($url,$collection->AppKey);
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index','w_id'=>$_REQUEST['w_id']]);
     }
 
     /**

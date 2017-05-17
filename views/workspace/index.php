@@ -2,12 +2,21 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\Collection;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\search\Workspace */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Workspaces';
+if(isset($_REQUEST['collection_id']))
+{
+	$collection	= Collection::findOne(['collection_id'=>$_REQUEST['collection_id']]);
+	$this->title= $collection->collection_name.' Workspaces';
+}
+else
+{
+	$this->title = 'Workspaces';
+}	
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="workspace-index">

@@ -20,13 +20,15 @@ use yii\widgets\ActiveForm;
       "}";
     $token2 = "{" .
       "\"wid\":\"37380bc1-dd47-4c95-8dbd-5efecafc8b26\"," . // workspace id
-      "\"rid\":\"e5a9d88b-d5a1-4798-8ebc-b220a6dd49af\"," . // report id
+      "\"rid\":\"85885f28-1412-4692-b23e-486042a04791\"," . // report id
       "\"wcn\":\"washington\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
       "\"aud\":\"https://analysis.windows.net/powerbi/api\"," .
       "\"nbf\":" . date("U") . "," .
-      "\"exp\":" . date("U" , strtotime("+1 hour")) .
+	  "\"username\":".\Yii::$app->user->id."," .
+	  "\"roles\":\"customer_key\"," .
+	  "\"exp\":" . date("U" , strtotime("+1 hour")) .
       "}";
     $inputval = rfc4648_base64_encode($token1) .
       "." .
@@ -55,15 +57,15 @@ use yii\widgets\ActiveForm;
 
 
 
-<div id="reportContainer"  style="height:800px"></div>
+<div id="reportContainer"  style="height:530px"></div>
     <script src="http://localhost/powerbi/web/js/node_modules/powerbi-client/dist/powerbi.min.js"></script>
     <script>
         (function () {
 			var models = window['powerbi-client'].models;
  			//console.log(models);
             var embedToken = '<?=$apptoken?>';
-            var reportId = 'e5a9d88b-d5a1-4798-8ebc-b220a6dd49af';
-            var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId+'"&$filter=CountryRegion/CountryRegionName eq \'United States\'";';
+            var reportId = '85885f28-1412-4692-b23e-486042a04791';
+            var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId;
 			var $defaultPageReportContainer = $('#reportContainer');
 			
 /* 			var defaultFilter =  models.AdvancedFilter({
@@ -113,7 +115,7 @@ use yii\widgets\ActiveForm;
                 accessToken: embedToken,
                 embedUrl: embedUrl,
                 id: reportId,
-				filters: defaultFilters,
+				//filters: defaultFilters,
 				//oDataFilter: "customer_Budget/eq_customer_id eq '1'",
                 settings: {
                     filterPaneEnabled: false,

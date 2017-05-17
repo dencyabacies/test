@@ -113,8 +113,15 @@ class DatasetController extends Controller
 		
 		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$dataset->dataset_id;
 		$workspace->doCurl_DELETE($url,$collection->AppKey);
-
-        return $this->redirect(['index','w_id'=>$_REQUEST['w_id']]);
+	
+		if(isset($_REQUEST['w_id']))
+		{
+			return $this->redirect(['index','w_id'=>$_REQUEST['w_id']]);
+		}
+		else
+		{
+			return $this->redirect(['index']);
+		}
     }
 
     /**

@@ -36,10 +36,10 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'gateway_id',
             ['class' => 'yii\grid\ActionColumn',
 				'buttons' => [
-				'delete'=>function($data){
-					return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete','id'=>$data->s_id],['data'=>[
+				'delete'=>function($url){
+					return Html::a('<span class="glyphicon glyphicon-trash"></span>',$url,['data'=>[
 						'method'=>'POST',
-						'params'=>['w_id'=>$_REQUEST['w_id']],
+						'params'=>['w_id'=>isset($_REQUEST['w_id'])?$_REQUEST['w_id']:''],
 					]]);
 				}
 			]

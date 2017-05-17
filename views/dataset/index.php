@@ -34,7 +34,16 @@ $this->params['breadcrumbs'][] = $this->title;
 			'workspace.workspace_name',
             'datasource_id',
             // 'gateway_id',
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+				'buttons' => [
+				'delete'=>function($data){
+					return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete'],['data'=>[
+						'method'=>'POST',
+						'params'=>['w_id'=>$_REQUEST['w_id']],
+					]]);
+				}
+			]
+			],
         ],
     ]); ?>
 </div>

@@ -125,8 +125,7 @@ class ReportsController extends Controller
     }
 	
 	public function actionCreateReport($w_id)
-	{
-		$model  	= new Reports();	
+	{	
 		$workspace  = Workspace::findOne($w_id);
 		$collection = Collection::findOne($workspace->collection_id);
 		
@@ -134,12 +133,14 @@ class ReportsController extends Controller
 		
 		$response = json_decode($workspace->doCurl_GET($url,$collection->AppKey));
 		foreach($response->value as $res){
+			$model  	= new Reports();
 			$model->report_name = $res->name;
 			$model->report_guid = $res->id;
 			$model->web_url		= $res->webUrl;
 			$model->embed_url	= $res->embedUrl;
+			$model->dataset_id	= $res->datasetId;
 			$model->workspace_id= $w_id;
-			$model->save();
+			$model->save(false);
 		}
 		return $this->redirect(['workspace/index']);	
 	}

@@ -33,7 +33,7 @@ class Reports extends \yii\db\ActiveRecord
     {
         return [
             [['report_guid', 'report_name', 'web_url', 'embed_url'], 'string'],
-            [['workspace_id'], 'integer'],
+            [['workspace_id','dataset_id'], 'integer'],
             [['workspace_id'], 'exist', 'skipOnError' => true, 'targetClass' => Workspace::className(), 'targetAttribute' => ['workspace_id' => 'w_id']],
         ];
     }
@@ -50,6 +50,7 @@ class Reports extends \yii\db\ActiveRecord
             'web_url' => 'Web Url',
             'embed_url' => 'Embed Url',
             'workspace_id' => 'Workspace ID',
+			'dataset_id' => 'Dataset ID',
         ];
     }
 

@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'collection.collection_name',
             //['class' => 'yii\grid\ActionColumn'],
 			[
-				'label'=>'url',
+				'label'=>'Report',
 				'format'=>'raw',
 				'value'=>function ($data) {
 					return Html::a('Generate',['reports/create-report','w_id'=>$data->w_id]);

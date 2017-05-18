@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'web_url:ntext',
             'embed_url:ntext',
             'workspace_id',
+			'dataset_id',
         ],
     ]) ?>
 

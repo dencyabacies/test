@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Workspace;
 use app\models\Collection;
+use app\models\Dataset;
 
 /**
  * ReportsController implements the CRUD actions for Reports model.
@@ -103,6 +104,13 @@ class ReportsController extends Controller
      */
     public function actionDelete($id)
     {
+		$reports	= Reports::findOne(['r_id'=>$id]);
+		$dataset 	= Dataset::findOne(['dataset_id'=>$reports->dataset_id]);
+		$workspace	= Workspace::find()->where(['w_id'=>$dataset->workspace_id])->one();
+		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
+		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/reports/'.$reports->report_guid;
+		$workspace->doCurl_DELETE($url,$collection->AppKey);
+		
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

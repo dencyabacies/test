@@ -23,14 +23,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'r_id',
             'report_guid',
             'report_name',
             'web_url:ntext',
             'embed_url:ntext',
             // 'workspace_id',
-
+			'dataset_id',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

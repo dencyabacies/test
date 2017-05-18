@@ -105,9 +105,18 @@ class WorkspaceController extends Controller
      */
     public function actionDelete($id)
     {
+		$workspace	= Workspace ::find()->where(['w_id'=>$id])->one();
+		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
+		$dataset 	= Dataset::find()->where(['workspace_id'=>$id])->all();
+		
 		Dataset::findOne(['workspace_id'=>$id])->delete();		
 		Reports::findOne(['workspace_id'=>$id])->delete();
         $this->findModel($id)->delete();
+		
+		foreach($dataset as $data_set){
+		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$data_set->dataset_id;
+		$workspace->doCurl_DELETE($url,$collection->AppKey);
+		}
 
         return $this->redirect(['index']);
     }

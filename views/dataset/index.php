@@ -1,13 +1,21 @@
 <?php
 
-use yii\helpers\Html;
+use yii\helpers\Html; 
 use yii\grid\GridView;
+use app\models\Workspace;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\search\Dataset */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Datasets';
+if(isset($_REQUEST['w_id']))
+{
+	$workspace	= Workspace::findOne(['w_id'=>$_REQUEST['w_id']]);
+	$this->title= $workspace->workspace_name.' Datasets';
+}
+else
+{
+	$this->title = 'Datasets';
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="dataset-index">
@@ -34,7 +42,16 @@ $this->params['breadcrumbs'][] = $this->title;
 			'workspace.workspace_name',
             'datasource_id',
             // 'gateway_id',
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+				'buttons' => [
+				'delete'=>function($url){
+					return Html::a('<span class="glyphicon glyphicon-trash"></span>',$url,['data'=>[
+						'method'=>'POST',
+						'params'=>['w_id'=>isset($_REQUEST['w_id'])?$_REQUEST['w_id']:''],
+					]]);
+				}
+			]
+			],
         ],
     ]); ?>
 </div>

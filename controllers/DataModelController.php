@@ -148,7 +148,7 @@ class DataModelController extends Controller
 				]);
 				foreach($data as $key=>$sheets){
 					$datamodel= $this->findModel($id);
-					//if($datamodel->save()){
+					if($datamodel->save()){
 						// save data too
 						foreach($sheets as $header=>$data){
 							foreach($data as $key=>$d){
@@ -160,10 +160,10 @@ class DataModelController extends Controller
 							\Yii::$app->db->createCommand()
 								->insert('customer_'.$key, $data)->execute();
 						}
-					//}
+					}
 				}
 				//print_r($data);die;
-                return;
+                return $this->redirect(['index']);
             }
 			//foreach sheet
 			//{new datamodel, input sample data}

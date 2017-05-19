@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Dataset */
 
-$this->title = 'Create Dataset';
+$this->title = 'Add Dashboard';
 $this->params['breadcrumbs'][] = ['label' => 'Datasets', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

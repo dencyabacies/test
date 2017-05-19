@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 <?php
     // 1. power bi access key
     $accesskey = "rtw+y5TCZ1PQekCtxO+oMe67byzivC2KWjF2x70oCB9B2PqAnYH2NKHDwjGQTEmuPm+p78TStTGgOF8kUBgR+Q==";
-	$id = \Yii::$app->user->id;
+	$id = get_current_user_id();
     // 2. construct input value
     $token1 = "{" .
       "\"typ\":\"JWT\"," .
@@ -58,7 +58,7 @@ use yii\widgets\ActiveForm;
 
 
 <div id="reportContainer"  style="height:530px"></div>
-    <script src="http://localhost/powerbi/web/js/node_modules/powerbi-client/dist/powerbi.min.js"></script>
+    <script src="http://eq-powerbi.azurewebsites.net/web/js/node_modules/powerbi-client/dist/powerbi.min.js"></script>
     <script>
         (function () {
 			var models = window['powerbi-client'].models;
@@ -67,48 +67,6 @@ use yii\widgets\ActiveForm;
             var reportId = '62aa4ab5-3883-421a-9b08-096feaeb34cb';
             var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId;
 			var $defaultPageReportContainer = $('#reportContainer');
-			
-/* 			var defaultFilter =  models.AdvancedFilter({
-				  table: "customer_Risk",
-				  column: "eq_id"
-				}, "And", [
-				  {
-					operator: "In",
-					values: [1]
-				  }
-				]); */
-			var advancedFilter = new window['powerbi-client'].models.AdvancedFilter ({
-				  table: "customer_Risk",
-				  column: "eq_customer_id"
-				}, "And", [
-				  {
-					operator: "Is",
-					value: "<?=\Yii::$app->user->id?>"
-				  },
-				
-				]);
-			var advancedFilter1 = new window['powerbi-client'].models.AdvancedFilter ({
-				  table: "customer_Budget",
-				  column: "eq_customer_id"
-				}, "And", [
-				  {
-					operator: "Is",
-					value: "<?=\Yii::$app->user->id?>"
-				  },
-				
-				]);
-			var advancedFilter2 = new window['powerbi-client'].models.AdvancedFilter ({
-				  table: "customer_MockupHeatmap",
-				  column: "eq_customer_id"
-				}, "And", [
-				  {
-					operator: "Is",
-					value: "<?=\Yii::$app->user->id?>"
-				  },
-				
-				]);
-			//var advancedFilter1= new window['powerbi-client'].models.AdvancedFilter ();
-			var defaultFilters = [advancedFilter,advancedFilter1,advancedFilter2];
 		  
             var config = {
                 type: 'report',
@@ -128,5 +86,3 @@ use yii\widgets\ActiveForm;
 		
 		})();
     </script>
-
-

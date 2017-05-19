@@ -102,7 +102,7 @@ class PowerbiController extends \yii\web\Controller
 							$params = json_encode([
 							"credentialType"=>"Basic",
 								"basicCredentials"=>[
-								"username"=>"abacies",
+								"username"=>"eqvision",
 								"password"=>"Al@inno17!",
 								]
 							]);

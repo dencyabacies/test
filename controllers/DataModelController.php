@@ -178,7 +178,7 @@ class DataModelController extends Controller
 	public function actionFormData(){
 		//static
 		$tables = [
-		'customer_Risk','customer_Budget','customer_MockupHeatmap'
+		'2_Technology','2_Social','2_MockupHeatmap'
 		];
 		$output = [];
 		foreach($tables as $table){

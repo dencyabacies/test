@@ -11,23 +11,23 @@ use yii\widgets\ActiveForm;
 <div class="test-data-form">
 <?php
     // 1. power bi access key
-    $accesskey = "o7rSltTDXbKMlWlj3XhAf8KLjq1Tfprs3HDlhXG8En6qdxbvT+s8a4g8+z29p3vCA41ZgZg+qhjtmUvKdCCBJA==";
-
+    $accesskey = "rtw+y5TCZ1PQekCtxO+oMe67byzivC2KWjF2x70oCB9B2PqAnYH2NKHDwjGQTEmuPm+p78TStTGgOF8kUBgR+Q==";
+	$id = \Yii::$app->user->id;
     // 2. construct input value
     $token1 = "{" .
       "\"typ\":\"JWT\"," .
       "\"alg\":\"HS256\"" .
       "}";
     $token2 = "{" .
-      "\"wid\":\"37380bc1-dd47-4c95-8dbd-5efecafc8b26\"," . // workspace id
-      "\"rid\":\"5a03df7e-09e3-475c-853d-e1379990437b\"," . // report id
-      "\"wcn\":\"washington\"," . // workspace collection name
+      "\"wid\":\"21046ed9-056e-4642-a2f6-ce1a8dc35b3a\"," . // workspace id
+      "\"rid\":\"62aa4ab5-3883-421a-9b08-096feaeb34cb\"," . // report id
+      "\"wcn\":\"eqvision\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .
       "\"aud\":\"https://analysis.windows.net/powerbi/api\"," .
       "\"nbf\":" . date("U") . "," .
-	  "\"username\":".\Yii::$app->user->id."," .
-	  "\"roles\":\"customer_key\"," .
+	  "\"username\":".$id."," .
+	  "\"roles\":\"customer\"," .
 	  "\"exp\":" . date("U" , strtotime("+1 hour")) .
       "}";
     $inputval = rfc4648_base64_encode($token1) .
@@ -64,7 +64,7 @@ use yii\widgets\ActiveForm;
 			var models = window['powerbi-client'].models;
  			//console.log(models);
             var embedToken = '<?=$apptoken?>';
-            var reportId = '5a03df7e-09e3-475c-853d-e1379990437b';
+            var reportId = '62aa4ab5-3883-421a-9b08-096feaeb34cb';
             var embedUrl = 'https://embedded.powerbi.com/appTokenReportEmbed?reportId' + reportId;
 			var $defaultPageReportContainer = $('#reportContainer');
 			

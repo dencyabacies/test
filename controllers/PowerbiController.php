@@ -7,6 +7,7 @@ use app\models\Workspace;
 use app\models\Collection;
 use app\models\Dataset;
 use yii\web\UploadedFile;
+use app\models\Dashboard;
 
 class PowerbiController extends \yii\web\Controller
 {
@@ -62,6 +63,7 @@ class PowerbiController extends \yii\web\Controller
 	public function actionCreateDataset()
     {
 		$dataset      	= new Dataset();  
+		$dashboard		= new Dashboard();
 		$collections	= Collection::find()->all();
 		$workspaces		= Workspace::find()->all();
                 
@@ -121,11 +123,18 @@ class PowerbiController extends \yii\web\Controller
 									'workspaces' => $workspaces,
 								]);
 							}
+							if(isset($respns_ds_gw->value))
+							{
 							foreach($respns_ds_gw->value as $gateway)
 							{
 							$dataset->datasource_id = $gateway->id;
 							$dataset->gateway_id 	= $gateway->gatewayId; 
 							$dataset->save(false);
+							
+							$dashboard->dashboard_name 	= $dataset->dashboard_name;
+							$dashboard->pbix_file	 	= 'uploads/'.$uploadedFile->name;
+							$dashboard->description 	= $dataset->description;
+							$dashboard->save(false);
 							
 							//PATCH
 							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dataset->datasource_id;
@@ -137,6 +146,7 @@ class PowerbiController extends \yii\web\Controller
 								]
 							]);
 							$respns_patch = json_decode($workspace->doCurl_POST($patchurl,$access_key,$params,"application/json","PATCH"));
+							}
 							}
 						
 						}

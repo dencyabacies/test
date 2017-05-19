@@ -31,7 +31,7 @@ class Dashboard extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dashboard_name', 'pbix_file', 'description', 'models', 'report_id', 'form_data'], 'string'],
+            [['dashboard_name', 'pbix_file', 'description', 'models', 'report_id', 'form_data'], 'safe'],
         ];
     }
 

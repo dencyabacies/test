@@ -104,11 +104,11 @@ class CollectionController extends Controller
      */
     public function actionDelete($id)
     {
-		$workspace = Workspace::findOne(['collection_id'=>$id]);
+		//$workspace = Workspace::findOne(['collection_id'=>$id]);
 		
-		Workspace::findOne(['collection_id'=>$id])->delete();
-		Dataset::findOne(['workspace_id'=>$workspace->w_id])->delete();	
-		Reports::findOne(['workspace_id'=>$workspace->w_id])->delete();	
+		//Workspace::findOne(['collection_id'=>$id])->delete();
+		//Dataset::findOne(['workspace_id'=>$workspace->w_id])->delete();	
+		//Reports::findOne(['workspace_id'=>$workspace->w_id])->delete();	
 		$this->findModel($id)->delete();		
 
         return $this->redirect(['index']);

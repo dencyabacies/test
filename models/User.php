@@ -49,8 +49,30 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+			
+			[['username','email','role'],'required'],
+			
+			[['username'], 'unique','targetClass' => '\app\models\User', 'message' => 'This Username has already been taken.'],
+            [['email'], 'unique','targetClass' => '\app\models\User', 'message' => 'This email address has already been taken.'],
+			
+			[['role'], 'string'],
+            [['email'],'email'],
+			
         ];
     }
+	
+	 /**
+     * @inheritdoc
+     */
+	public function attributeLabels() {
+        return [
+		  'username'=>'Username',  
+          'email'=>'E-mail',         
+          'roel'=>'Role',  
+        ];
+    }
+
+	
     /**
      * @inheritdoc
      */
@@ -167,4 +189,48 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+	
+	
+    public function generateUniqueRandomString($attribute, $length = 10) {
+
+            $randomString = Yii::$app->getSecurity()->generateRandomString($length);
+
+            if(!$this->findOne([$attribute => $randomString]))
+                return $randomString;
+            else
+                return $this->generateUniqueRandomString($attribute, $length);
+
+    }
+    
+    public function sendEmailAddUser($id,$password)
+    {		
+        /* @var $user User */
+        $user = User::findOne([
+            'status' => User::STATUS_ACTIVE,
+            'id' => $id,
+        ]);
+			
+        if (!$user) {
+            return false;
+        }
+        
+		
+		  $message = Yii::$app
+            ->mailer
+            ->compose(
+                ['html' => 'adduserSuccess-html'],
+                ['user' => $user,'password'=>$password ]
+            )
+            ->setFrom([Yii::$app->params['supportEmail'] => 'PowerBI '])
+            ->setTo( $user->email)
+            ->setSubject("Login Credential");			
+            
+		$message->getSwiftMessage()->getHeaders()->addTextHeader('MIME-version', '1.0\n');
+		$message->getSwiftMessage()->getHeaders()->addTextHeader('charset', ' iso-8859-1\n');
+		
+		return $message->send();
+		
+    }
+    
+	
 }

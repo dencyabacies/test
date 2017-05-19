@@ -38,6 +38,7 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Home', 'url' => ['/test/report']],
             ['label' => 'Test Data', 'url' => ['/test/index']],
+            ['label' => 'User Manage', 'url' => ['/user/index']],
             [
                 'label' => 'PowerBI',
                 'items' => [

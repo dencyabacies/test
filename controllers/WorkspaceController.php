@@ -188,4 +188,43 @@ class WorkspaceController extends Controller
 		return $this->redirect(['workspace/index','collection_id'=>$_REQUEST['collection_id']]);
 		
 	}
+	
+	/**
+	* @creating workspace
+	* @returns workspace_id
+	*/
+    public function actionCreateWorkspace()
+    {
+		$workspace      = new Workspace();  
+		$collections 	= Collection::find()->all();
+                
+		if($workspace->load(Yii::$app->request->post())){
+            $collection 	= Collection::findOne($workspace->collection_id);
+			$end_url		='https://api.powerbi.com/v1.0/collections/';
+            $end_url        .= $collection->collection_name;
+            $end_url        .='/workspaces';
+			$access_key	= $collection->AppKey;
+			$params = "name={$workspace->workspace_name}";
+                        $response       = json_decode($workspace->doCurl_POST($end_url,$access_key,$params,"application/x-www-form-urlencoded","POST"));
+                        if(isset($response->error)){
+                            //flash error message
+                            Yii::$app->session->setFlash('some_error',  $response->error->message);
+                            return $this->render('create-workspace',[
+								'model'=>$workspace,
+                                'collections' => $collections,
+                            ]);
+                        }
+                        $workspace->workspace_id = $response->workspaceId;
+						$workspace->save(false);
+
+                        return $this->redirect(['workspace/index']);
+		}
+		else
+		{
+			return $this->render('create-workspace',[
+				'model'=>$workspace,
+                'collections' => $collections,
+			]);
+		}
+    }
 }

@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use app\models\Customer;
 
 /**
  * DataModelController implements the CRUD actions for DataModel model.
@@ -267,7 +268,13 @@ class DataModelController extends Controller
 	public function actionSaveData(){
 		//$this->csrf
 		if(\Yii::$app->request->post()){
-			
+			$customer_id = \Yii::$app->request->post()['attributes']['eq_customer_id'];
+			$customer = Customer::find()->where(['eq_customer_id'=>$customer_id])->one();
+			if(!$customer){
+				$customer = new Customer();
+				$customer->eq_customer_id = $customer_id;
+				$customer->save();
+			}
 			\Yii::$app->db->createCommand()
 				->insert(\Yii::$app->request->post()['table_name'], \Yii::$app->request->post()['attributes'])
 				->execute();	

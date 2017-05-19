@@ -39,9 +39,9 @@ class Collection extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'collection_id' => 'Collection ID',
-            'collection_name' => 'Collection Name',
-            'AppKey' => 'App Key',
+            'collection_id' 	=> 'Collection ID',
+            'collection_name' 	=> 'Collection Name',
+            'AppKey' 		=> 'App Key',
         ];
     }
 
@@ -52,4 +52,5 @@ class Collection extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Workspaces::className(), ['collection_id' => 'collection_id']);
     }
+    
 }

@@ -8,7 +8,9 @@ use app\models\search\Collection as CollectionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use app\models\Workspace;
+use app\models\Dataset;
+use app\models\Reports;
 /**
  * CollectionController implements the CRUD actions for Collection model.
  */
@@ -98,10 +100,16 @@ class CollectionController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+	 * Deletes the workspace,dataset,reports that are linked to this collection.
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+		$workspace = Workspace::findOne(['collection_id'=>$id]);
+		
+		Workspace::findOne(['collection_id'=>$id])->delete();
+		Dataset::findOne(['workspace_id'=>$workspace->w_id])->delete();	
+		Reports::findOne(['workspace_id'=>$workspace->w_id])->delete();	
+		$this->findModel($id)->delete();		
 
         return $this->redirect(['index']);
     }
@@ -121,4 +129,5 @@ class CollectionController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+	
 }

@@ -38,6 +38,15 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Home', 'url' => ['/test/report']],
             ['label' => 'Test Data', 'url' => ['/test/index']],
+            [
+                'label' => 'PowerBI',
+                'items' => [
+                     ['label' => 'Collections', 'url' => ['/collection/index']],
+                     ['label' => 'WorkSpaces', 'url' => ['/workspace/index']],
+					 ['label' => 'Dataset', 'url' => ['/dataset/index']],
+					 ['label' => 'Reports', 'url' => ['/reports/index']],
+                ],
+            ],
             //['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
@@ -60,6 +69,14 @@ AppAsset::register($this);
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
+        <?php if (Yii::$app->session->hasFlash('some_error')): ?>
+          <div class="alert alert-danger alert-dismissable">
+          <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+          <h4><i class="icon fa fa-check"></i>Oops!</h4>
+          <?= Yii::$app->session->getFlash('some_error') ?>
+          </div>
+        <?php endif; ?>
+        
         <?= $content ?>
     </div>
 </div>

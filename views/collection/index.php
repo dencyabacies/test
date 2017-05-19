@@ -23,11 +23,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'collection_id',
-            'collection_name',
+            //'collection_name',
+			[
+				'label'=>'Collection Name',
+				'format'=>'raw',
+				'value'=>function ($data) {
+					return Html::a($data->collection_name,['workspace/index'],[
+					'data'=>[
+						'method'=>'GET',
+						'params'=>['collection_id'=>$data->collection_id],
+					],
+					]);
+				},
+			],
             'AppKey',
-
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

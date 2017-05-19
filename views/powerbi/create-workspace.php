@@ -1,9 +1,26 @@
 <?php
-/* @var $this yii\web\View */
-?>
-<h1>powerbi/create-workspace</h1>
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use app\models\Workspace;
+use app\models\Collection;
+/* @var $this yii\web\View */
+/* @var $model app\models\Workspace */
+/* @var $form ActiveForm */
+$this->title = 'Create Workspace';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="powerbi-createworkspace">
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php $form = ActiveForm::begin(); ?>
+
+        <?= $form->field($model, 'collection_id')->dropDownList(ArrayHelper::map($collections,'collection_id','collection_name'), ['prompt'=>'Select Collection']) ?>
+        <?= $form->field($model, 'workspace_name')->textInput() ?>
+    
+        <div class="form-group">
+            <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+        </div>
+    <?php ActiveForm::end(); ?>
+
+</div><!-- powerbi-createworkspace -->

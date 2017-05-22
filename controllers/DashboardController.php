@@ -145,7 +145,7 @@ class DashboardController extends Controller
 				echo $column->name;
 			}
 		}
-		
+		echo "Test commit";
 		die;
 	}
     /**

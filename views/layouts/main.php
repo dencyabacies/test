@@ -44,8 +44,8 @@ AppAsset::register($this);
                 'items' => [
                      ['label' => 'Collections', 'url' => ['/collection/index']],
                      ['label' => 'WorkSpaces', 'url' => ['/workspace/index']],
-					 ['label' => 'Dataset', 'url' => ['/dataset/index']],
-					 ['label' => 'Reports', 'url' => ['/reports/index']],
+					 ['label' => 'Dashboards', 'url' => ['/dashboard/index']],
+					 //['label' => 'Reports', 'url' => ['/reports/index']],
                 ],
             ],
             //['label' => 'Contact', 'url' => ['/site/contact']],

@@ -14,10 +14,14 @@ use Yii;
  * @property string $models
  * @property string $report_id
  * @property string $form_data
+ * @property integer $workspace_id
+ * @property string $prefix
  */
 class Dashboard extends \yii\db\ActiveRecord
 {
-    /**
+    public $collection_id;
+	public $file;
+	/**
      * @inheritdoc
      */
     public static function tableName()
@@ -31,10 +35,22 @@ class Dashboard extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dashboard_name', 'pbix_file', 'description', 'models', 'report_id', 'form_data'], 'safe'],
+            [['dashboard_name', 'workspace_id','prefix'], 'required'],
+            [['dashboard_name', 'pbix_file', 'description', 'models', 'report_id', 'form_data'], 'string'],
+			['prefix','validatePlain'],
+			['prefix','unique'],
+            [['workspace_id'], 'integer'],
+			['file', 'file'],
         ];
     }
-
+	
+	public function validatePlain($attribute, $params)
+	{
+		if(preg_match('/[^A-Za-z0-9]/',$this->$attribute))
+		{
+			$this->addError($attribute,'Only alpahanumeric characters are allowed.');
+		}
+	}
     /**
      * @inheritdoc
      */
@@ -48,6 +64,25 @@ class Dashboard extends \yii\db\ActiveRecord
             'models' => 'Models',
             'report_id' => 'Report ID',
             'form_data' => 'Form Data',
+            'workspace_id' => 'Workspace ID',
+            'prefix' => 'Prefix',
+			'file' => 'Upload File',
         ];
+    }
+    public function upload()
+    {
+        if ($this->validate()) {
+            $this->file->saveAs('uploads/' . $this->file->baseName . '.' . $this->file->extension);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWorkspace()
+    {
+        return $this->hasOne(Workspace::className(), ['w_id' => 'workspace_id']);
     }
 }

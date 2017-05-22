@@ -123,7 +123,20 @@ class DashboardController extends Controller
             ]);
         }
     }
-
+	
+	public function actionCreateForm($id){
+		$model = $this->findModel($id);
+		$tablenames = unserialize($model->models);
+		//print_R($fields);
+		foreach($tablenames as $tablename){
+			$tableSchema = \Yii::$app->db->getTableSchema($tablename);
+			foreach ($tableSchema->columns as $column) {
+				echo $column->name;
+			}
+		}
+		
+		die;
+	}
     /**
      * Updates an existing Dashboard model.
      * If update is successful, the browser will be redirected to the 'view' page.

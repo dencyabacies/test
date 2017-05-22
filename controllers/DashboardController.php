@@ -74,18 +74,28 @@ class DashboardController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 			
 			$model->file = UploadedFile::getInstance($model, 'file');
-			if ($model->upload() && $model->save()) {
+			if ($model->upload() 
+				//&& $model->save()
+			) {
                 // file is uploaded successfully
 				$data = \moonland\phpexcel\Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
 					'setFirstRecordAsKeys' => true, 
 					'setIndexSheetByName' => true, 
 				]);
 				$tables = [];
-				foreach($data as $key=>$sheets){
+				//print_r($data);die;
+				foreach($data as $key=>$sheets){					
 					$datamodel = new DataModel();
 					$datamodel->model_name = $model->prefix."_".$key;
 					$tables[] = $datamodel->model_name;
-					//$datamodel->dashboard_id = $model->dashboard_id;
+					if(!isset($sheets[0])){
+						$model->addError("file","Excel file requires atleast one sheet.");
+						return $this->render('create', [
+							'model' => $model,
+							'collections' => $collections,
+							'workspaces' => $workspaces
+						]);
+					}
 					$headers = $sheets[0];
 					$attributes = [];
 					foreach($headers as $header=>$value){
@@ -95,8 +105,9 @@ class DashboardController extends Controller
 							else $attributes[] = ['field_name'=>$header,'field_type'=>'text'];							
 						}
 					}
+					
 					$datamodel->attributes = serialize($attributes);
-					if($datamodel->save()){
+					if(!empty($headers)&& $datamodel->save()){
 						// save data too
 						foreach($sheets as $header=>$data){
 							foreach($data as $key=>$d){

@@ -38,6 +38,20 @@ $this->params['breadcrumbs'][] = $this->title;
 				},
 			],
             'AppKey',
+			[
+				'label'=>'Workspace',
+				'format'=>'raw',
+				'value'=>function($data){
+					return Html::a('Add Workspace',['workspace/create-workspace'],[
+						'data'=>[
+							'method'=>'POST',
+							'params'=>[
+								'collection_id'=>$data->collection_id
+							]
+						]
+					]);
+				}
+			],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

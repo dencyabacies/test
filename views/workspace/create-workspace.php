@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php 
 		if(isset($_REQUEST['collection_id']))
 		{
-			echo $form->field($model, 'collection_id')->dropDownList(ArrayHelper::map($collections,'collection_id','collection_name'), ['options'=>[$_REQUEST['collection_id']=>['selected'=>true]],'prompt'=>'Select Collection'])->hiddenInput()->label(false);
+			echo $form->field($model, 'collection_id')->dropDownList(ArrayHelper::map($collections,'collection_id','collection_name'), ['options'=>[$_REQUEST['collection_id']=>['selected'=>true]],'prompt'=>'Select Collection']);
 		}
 		else
 		{

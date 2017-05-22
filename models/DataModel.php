@@ -28,6 +28,7 @@ class DataModel extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+			//[['dashboard_id'],'integer'],
             [['model_name'], 'required'],
             [['model_name', 'attributes'], 'string'],
             [['model_name'], 'unique'],

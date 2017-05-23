@@ -19,7 +19,7 @@ use Yii;
  */
 class Dashboard extends \yii\db\ActiveRecord
 {
-   // public $collection_id;
+    public $collection_id;
 	public $file;
 	/**
      * @inheritdoc
@@ -40,7 +40,6 @@ class Dashboard extends \yii\db\ActiveRecord
 			['prefix','validatePlain'],
 			['prefix','unique'],
             [['workspace_id'], 'integer'],
-            [['dashboard_id'], 'safe'],
 			['file', 'file'],
         ];
     }

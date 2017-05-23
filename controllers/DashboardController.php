@@ -155,7 +155,7 @@ class DashboardController extends Controller
 	* Uploading the pbix file
 	*/
 	
-	public function actionAddpbix()
+	public function actionAddpbix($id)
 	{
 		
 		$dashboard		= $this->findModel($id);
@@ -181,7 +181,6 @@ class DashboardController extends Controller
 			//create file which can access via cURL.
 			$curl_file = curl_file_create(\Yii::$app->basePath.'/web/uploads/'.$uploadedFile->name,'pbix',$uploadedFile->baseName);
 			$params = ['file' => $curl_file];
-		
             $response	= json_decode($workspace->doCurl_POST($end_url,$access_key,$params,"multipart/form-data","POST"));
                         if(isset($response->error->message)){
                             //flash error message
@@ -224,10 +223,11 @@ class DashboardController extends Controller
 							{
 							foreach($respns_ds_gw->value as $gateway)
 							{
-							$dashboard1->datasource_id 	= $gateway->id;
-							$dashboard1->gateway_id 	= $gateway->gatewayId; 
-							$dashboard1->pbix_file	 	= 'uploads/'.$uploadedFile->name;
+							$dashboard->datasource_id 	= $gateway->id;
+							$dashboard->gateway_id 	= $gateway->gatewayId; 
+							$dashboard->pbix_file	 	= 'uploads/'.$uploadedFile->name;
 							
+							//report generation with collection id and workspace id
 							$url="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/reports";
 		
 							$response = json_decode($workspace->doCurl_GET($url,$access_key));
@@ -241,10 +241,10 @@ class DashboardController extends Controller
 								$reports->dataset_id	= $res->datasetId;
 								$reports->workspace_id	= $workspace->w_id;
 								$reports->save(false);
-								$dashboard1->report_id 	= $reports->r_id;
+								$dashboard->report_id 	= $reports->r_id;
 								}
 							}
-							$dashboard1->save(false);
+							$dashboard->save(false);
 							
 							//PATCH
 							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;

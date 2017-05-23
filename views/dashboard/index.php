@@ -16,7 +16,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Add Dashboard', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Add Dashboard', ['create'], ['class' => 'btn btn-success',
+			'data'=>[
+				'method'=>'POST',
+				'params'=>[
+					'workspace_id'=>isset($_REQUEST['workspace_id'])?$_REQUEST['workspace_id']:'',
+					'collection_id'=>isset($_REQUEST['collection_id'])?$_REQUEST['collection_id']:'',
+				],
+			]
+		]) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -26,7 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
             //'dashboard_id',
             'dashboard_name',
-            'pbix_file:ntext',
+            //'pbix_file:ntext',
+			[
+			'label' =>'Pbix File',
+			'format'=>'raw',
+			'value'=>function($data){
+				return !empty($data['pbix_file'])?(Html::a($data->pbix_file,[\Yii::$app->basePath.'/web/'.$data->pbix_file],['download'=>'download'])):(Html::a('Add file',['dashboard/addpbix','id'=>$data->dashboard_id]));
+			}
+			],
             'description',
             //'models:ntext',
             // 'report_id:ntext',

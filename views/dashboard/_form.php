@@ -17,7 +17,9 @@ use yii\helpers\ArrayHelper;
 
     <?= $form->field($model, 'description')->textInput() ?>
 
-	<?= $form->field($model, 'collection_id')->dropDownList(ArrayHelper::map($collections,'collection_id','collection_name'), ['prompt'=>'Select Collection','onChange'=>'$.get("'.Yii::$app->urlManager->createUrl('workspace/workspaceslist?collection_id=').'"+$(this).val(),function(data){$("#dataset-workspace_id").html(data);})',])?>
+	<?= $form->field($model, 'collection_id')->dropDownList(ArrayHelper::map($collections,'collection_id','collection_name'), [
+	isset($_REQUEST['collection_id'])?('options'=>[$_REQUEST['collection_id']=>['selected'=>true]]):'',
+	'prompt'=>'Select Collection','onChange'=>'$.get("'.Yii::$app->urlManager->createUrl('workspace/workspaceslist?collection_id=').'"+$(this).val(),function(data){$("#dataset-workspace_id").html(data);})',])?>
 	<?= $form->field($model, 'workspace_id')->dropDownList([''=>'Select Workspace']) ?>	
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

@@ -135,6 +135,7 @@ class DashboardController extends Controller
         }
     }
 	
+
 	
 	/**
 	*
@@ -238,6 +239,21 @@ class DashboardController extends Controller
 				'collections'	=> $collections,
 			]);
 		}
+	}
+
+
+	public function actionCreateForm($id){
+		$model = $this->findModel($id);
+		$tablenames = unserialize($model->models);
+		//print_R($fields);
+		foreach($tablenames as $tablename){
+			$tableSchema = \Yii::$app->db->getTableSchema($tablename);
+			foreach ($tableSchema->columns as $column) {
+				echo $column->name;
+			}
+		}
+		echo "Test commit";
+		die;
 	}
 
     /**

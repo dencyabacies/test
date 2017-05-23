@@ -84,19 +84,31 @@ class DashboardController extends Controller
 					'setIndexSheetByName' => true, 
 				]);
 				$tables = [];
-				//print_r($data);die;
+				
+				//**Naming convention check starts
+				$checkTableName = $this->validateNamingConvention($data);		
+				if ($checkTableName['status']=='error'){
+					$model->addError("file",$checkTableName['msg']);
+					return $this->render('create', [
+					'model' => $model,
+					'collections' => $collections,
+					'workspaces' => $workspaces
+					]);
+				}
+				//**Check Ends..
+
 				foreach($data as $key=>$sheets){					
 					$datamodel = new DataModel();
-					$datamodel->model_name = $model->prefix."_".$key;
+					$datamodel->model_name = $model->prefix."_".$key;					
 					$tables[] = $datamodel->model_name;
-					if(!isset($sheets[0])){
+					/*if(!isset($sheets[0])){
 						$model->addError("file","Excel file requires atleast one sheet.");
 						return $this->render('create', [
 							'model' => $model,
 							'collections' => $collections,
 							'workspaces' => $workspaces
 						]);
-					}
+					}*/
 					$headers = $sheets[0];
 					$attributes = [];
 					foreach($headers as $header=>$value){
@@ -107,7 +119,7 @@ class DashboardController extends Controller
 						}
 					}
 					
-					$datamodel->attributes = serialize($attributes);
+					$datamodel->attributes = serialize($attributes);					
 					if(!empty($headers)&& $datamodel->save()){
 						// save data too
 						foreach($sheets as $header=>$data){
@@ -145,13 +157,15 @@ class DashboardController extends Controller
 	
 	public function actionAddpbix()
 	{
-		$dashboard		= new Dashboard();
+		
+		$dashboard		= $this->findModel($id);
+		//$dashboard		= new Dashboard();
 		$collections	= Collection::find()->all();
 		$workspaces		= Workspace::find()->all();
                 
 		if($dashboard->load(Yii::$app->request->post())){
-			$dashboard1		= Dashboard::findOne($dashboard->dashboard_id);
-            $workspace	 	= Workspace::findOne($dashboard1->workspace_id);
+			
+            $workspace	 	= Workspace::findOne($dashboard->workspace_id);
 			$collection 	= Collection::findOne($workspace->collection_id);
 			$uploadedFile   = UploadedFile::getInstance($dashboard, 'file');
 			
@@ -161,7 +175,7 @@ class DashboardController extends Controller
 			//request URL which returns dataset id.
 			$end_url		='https://api.powerbi.com/v1.0/collections/';
             $end_url        .= $collection->collection_name;
-            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dashboard1->dashboard_name;
+            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dashboard->dashboard_name;
 			$access_key		= $collection->AppKey;
 			
 			//create file which can access via cURL.
@@ -177,8 +191,8 @@ class DashboardController extends Controller
                                 'workspaces' => $workspaces,
                             ]);
                         }
-                        $dashboard1->dataset_id 	= $response->id;
-						$dashboard1->workspace_id	= $workspace->w_id;
+                        $dashboard->dataset_id 	= $response->id;
+						$dashboard->workspace_id	= $workspace->w_id;
 						
 						//The request URL which returns the dataset id of the workspace
 						//if use above dataset_id the datasource response is Datasource ID missing.We are the below dataset for the next request.
@@ -233,7 +247,7 @@ class DashboardController extends Controller
 							$dashboard1->save(false);
 							
 							//PATCH
-							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard1->datasource_id;
+							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;
 							$params = json_encode([
 							"credentialType"=>"Basic",
 								"basicCredentials"=>[
@@ -263,15 +277,22 @@ class DashboardController extends Controller
 	public function actionCreateForm($id){
 		$model = $this->findModel($id);
 		$tablenames = unserialize($model->models);
-		//print_R($fields);
+		$tables = [];
 		foreach($tablenames as $tablename){
-			$tableSchema = \Yii::$app->db->getTableSchema($tablename);
-			foreach ($tableSchema->columns as $column) {
-				echo $column->name;
-			}
+			//$tableSchema = \Yii::$app->db->getTableSchema($tablename);
+			//foreach ($tableSchema->columns as $column) {				
+			$datamodel = DataModel::find()->where(['model_name'=>$tablename])->one();
+			$tables[$tablename]['attributes'] = unserialize($datamodel->attributes);
+			$tables[$tablename]['form_data'] = unserialize($datamodel->form_data);
 		}
-		echo "Test commit";
-		die;
+		if(\Yii::$app->request->post()){
+			//handle post data
+		}
+		return 	
+		$this->render('form_generator', [
+                'model' => $model,
+				'tables' => $tables,
+            ]);
 	}
 
     /**
@@ -349,4 +370,87 @@ class DashboardController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+	
+	/* @Name:validateNamingConvention
+	** @Def: To check Naming Convention wrt MSSQL
+	** convention will follow PascalCase
+    ** @Created:22-May-2017	
+	*/
+	public function validateNamingConvention($data)
+	{
+		$errMsg = '';
+		$model = new Dashboard();
+		$result = array('status'=>'success','msg'=>'');
+		foreach($data as $key=>$sheets){
+			$datamodel = new DataModel();
+			$datamodel->model_name = $model->prefix."_".$key;
+			$tables[] = $datamodel->model_name;
+			if(!isset($sheets[0])){
+				$model->addError("file","Excel file requires atleast one sheet.");
+				return $this->render('create', [
+					'model' => $model,
+					'collections' => $collections,
+					'workspaces' => $workspaces
+				]);
+			}
+			$headers = $sheets[0];
+			$attributes = [];
+			foreach($headers as $header=>$value){
+				if($header!=''){
+					if((strtolower($header) == 'id'))
+						$attributes[] = ['field_name'=>$header,'field_type'=>'integer'];
+					else $attributes[] = ['field_name'=>$header,'field_type'=>'text'];							
+				}
+			}					
+			$attributes = serialize($attributes);
+			//**Naming convention check starts ..sheet column
+			$checkTableName = $this->checkNamingConvention($key,$datamodel->model_name,$attributes);
+			if ($checkTableName['sheet']['status']=='error'){
+				$errMsg.= "$key is not a valid SheetName, it should Alphabetic and Singular only."."\r\n";
+			}
+			if ($checkTableName['column']['status']=='error'){
+				$errMsg.= "$key have invalid column: ".$checkTableName['column']['msg']." it should Alphabetic only."."\r\n";
+			}
+			//check ends..
+		}
+        if(!empty($errMsg)){
+		   $result = array('status'=>'error','msg'=>$errMsg);
+		}
+		return $result;
+	}
+	
+	/* @Name:checkNamingConvention
+	** @Def: To check Naming Convention wrt MSSQL
+	** convention will follow PascalCase
+    ** @Created:22-May-2017	
+	*/
+	public function checkNamingConvention($sheetName,$tableName,$attributes)
+	{
+		$result['sheet'] = array('status'=>'success','msg'=>'');
+		$result['column'] = array('status'=>'success','msg'=>'');
+		if (preg_match('/[^a-zA-Z_]/',$tableName)){
+		    //Not a valid Name			
+			$result['sheet'] = array('status'=>'error','msg'=>$sheetName);
+		}
+		$lastChar = substr($tableName, -1);
+		if ($lastChar=='s' || $lastChar=='S'){			
+			$result['sheet'] = array('status'=>'error','msg'=>$sheetName);
+		}
+		//check column names;
+		$attributes = unserialize($attributes);
+		$invalidColumn = array();
+		foreach($attributes as $attribute){
+			$columnName = $attribute['field_name'];
+			if (preg_match('/[^a-zA-Z_]/',$columnName)){
+		        //Not a valid column Name			    
+				$invalidColumn[] = $columnName;		
+		    }
+		}
+		if(count($invalidColumn)>0){
+		   $strColumn = implode(",",$invalidColumn);
+		   $result['column'] = array('status'=>'error','msg'=>$strColumn);
+		}		
+		return $result;
+	}
+	
 }

@@ -396,15 +396,14 @@ class DashboardController extends Controller
 		foreach($attributes as $attribute){
 			$columnName = $attribute['field_name'];
 			if (preg_match('/[^a-zA-Z_]/',$columnName)){
-		        //Not a valid Name			    
+		        //Not a valid column Name			    
 				$invalidColumn[] = $columnName;		
 		    }
 		}
 		if(count($invalidColumn)>0){
 		   $strColumn = implode(",",$invalidColumn);
 		   $result['column'] = array('status'=>'error','msg'=>$strColumn);
-		}
-		
+		}		
 		return $result;
 	}
 	

@@ -83,19 +83,31 @@ class DashboardController extends Controller
 					'setIndexSheetByName' => true, 
 				]);
 				$tables = [];
-				//print_r($data);die;
+				
+				//**Naming convention check starts
+				$checkTableName = $this->validateNamingConvention($data);		
+				if ($checkTableName['status']=='error'){
+					$model->addError("file",$checkTableName['msg']);
+					return $this->render('create', [
+					'model' => $model,
+					'collections' => $collections,
+					'workspaces' => $workspaces
+					]);
+				}
+				//**Check Ends..
+
 				foreach($data as $key=>$sheets){					
 					$datamodel = new DataModel();
-					$datamodel->model_name = $model->prefix."_".$key;
+					$datamodel->model_name = $model->prefix."_".$key;					
 					$tables[] = $datamodel->model_name;
-					if(!isset($sheets[0])){
+					/*if(!isset($sheets[0])){
 						$model->addError("file","Excel file requires atleast one sheet.");
 						return $this->render('create', [
 							'model' => $model,
 							'collections' => $collections,
 							'workspaces' => $workspaces
 						]);
-					}
+					}*/
 					$headers = $sheets[0];
 					$attributes = [];
 					foreach($headers as $header=>$value){
@@ -106,7 +118,7 @@ class DashboardController extends Controller
 						}
 					}
 					
-					$datamodel->attributes = serialize($attributes);
+					$datamodel->attributes = serialize($attributes);					
 					if(!empty($headers)&& $datamodel->save()){
 						// save data too
 						foreach($sheets as $header=>$data){
@@ -195,4 +207,88 @@ class DashboardController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+	
+	/* @Name:validateNamingConvention
+	** @Def: To check Naming Convention wrt MSSQL
+	** convention will follow PascalCase
+    ** @Created:22-May-2017	
+	*/
+	public function validateNamingConvention($data)
+	{
+		$errMsg = '';
+		$model = new Dashboard();
+		$result = array('status'=>'success','msg'=>'');
+		foreach($data as $key=>$sheets){
+			$datamodel = new DataModel();
+			$datamodel->model_name = $model->prefix."_".$key;
+			$tables[] = $datamodel->model_name;
+			if(!isset($sheets[0])){
+				$model->addError("file","Excel file requires atleast one sheet.");
+				return $this->render('create', [
+					'model' => $model,
+					'collections' => $collections,
+					'workspaces' => $workspaces
+				]);
+			}
+			$headers = $sheets[0];
+			$attributes = [];
+			foreach($headers as $header=>$value){
+				if($header!=''){
+					if((strtolower($header) == 'id'))
+						$attributes[] = ['field_name'=>$header,'field_type'=>'integer'];
+					else $attributes[] = ['field_name'=>$header,'field_type'=>'text'];							
+				}
+			}					
+			$attributes = serialize($attributes);
+			//**Naming convention check starts ..sheet column
+			$checkTableName = $this->checkNamingConvention($key,$datamodel->model_name,$attributes);
+			if ($checkTableName['sheet']['status']=='error'){
+				$errMsg.= "$key is not a valid SheetName, it should Alphabetic and Singular only."."\r\n";
+			}
+			if ($checkTableName['column']['status']=='error'){
+				$errMsg.= "$key have invalid column: ".$checkTableName['column']['msg']." it should Alphabetic only."."\r\n";
+			}
+			//check ends..
+		}
+        if(!empty($errMsg)){
+		   $result = array('status'=>'error','msg'=>$errMsg);
+		}
+		return $result;
+	}
+	
+	/* @Name:checkNamingConvention
+	** @Def: To check Naming Convention wrt MSSQL
+	** convention will follow PascalCase
+    ** @Created:22-May-2017	
+	*/
+	public function checkNamingConvention($sheetName,$tableName,$attributes)
+	{
+		$result['sheet'] = array('status'=>'success','msg'=>'');
+		$result['column'] = array('status'=>'success','msg'=>'');
+		if (preg_match('/[^a-zA-Z_]/',$tableName)){
+		    //Not a valid Name			
+			$result['sheet'] = array('status'=>'error','msg'=>$sheetName);
+		}
+		$lastChar = substr($tableName, -1);
+		if ($lastChar=='s' || $lastChar=='S'){			
+			$result['sheet'] = array('status'=>'error','msg'=>$sheetName);
+		}
+		//check column names;
+		$attributes = unserialize($attributes);
+		$invalidColumn = array();
+		foreach($attributes as $attribute){
+			$columnName = $attribute['field_name'];
+			if (preg_match('/[^a-zA-Z_]/',$columnName)){
+		        //Not a valid Name			    
+				$invalidColumn[] = $columnName;		
+		    }
+		}
+		if(count($invalidColumn)>0){
+		   $strColumn = implode(",",$invalidColumn);
+		   $result['column'] = array('status'=>'error','msg'=>$strColumn);
+		}
+		
+		return $result;
+	}
+	
 }

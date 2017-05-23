@@ -39,13 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'label' =>'Pbix File',
 			'format'=>'raw',
 			'value'=>function($data){
-				return !empty($data['pbix_file'])?(Html::a($data->pbix_file,[\Yii::$app->basePath.'/web/'.$data->pbix_file],['download'=>'download'])):(Html::a('Add file',['dashboard/addpbix'],['data'=>[
-					'method'=>'POST',
-					'params'=>[
-						'dashboard_id'=>$data->dashboard_id,
-					]
-				]
-				]));
+				return !empty($data['pbix_file'])?(Html::a($data->pbix_file,[\Yii::$app->basePath.'/web/'.$data->pbix_file],['download'=>'download'])):(Html::a('Add file',['dashboard/addpbix','id'=>$data->dashboard_id]));
 			}
 			],
             'description',

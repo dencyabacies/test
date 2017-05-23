@@ -144,13 +144,15 @@ class DashboardController extends Controller
 	
 	public function actionAddpbix()
 	{
-		$dashboard		= new Dashboard();
+		
+		$dashboard		= $this->findModel($id);
+		//$dashboard		= new Dashboard();
 		$collections	= Collection::find()->all();
 		$workspaces		= Workspace::find()->all();
                 
 		if($dashboard->load(Yii::$app->request->post())){
-			$dashboard1		= Dashboard::findOne($dashboard->dashboard_id);
-            $workspace	 	= Workspace::findOne($dashboard1->workspace_id);
+			
+            $workspace	 	= Workspace::findOne($dashboard->workspace_id);
 			$collection 	= Collection::findOne($workspace->collection_id);
 			$uploadedFile   = UploadedFile::getInstance($dashboard, 'file');
 			
@@ -160,7 +162,7 @@ class DashboardController extends Controller
 			//request URL which returns dataset id.
 			$end_url		='https://api.powerbi.com/v1.0/collections/';
             $end_url        .= $collection->collection_name;
-            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dashboard1->dashboard_name;
+            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dashboard->dashboard_name;
 			$access_key		= $collection->AppKey;
 			
 			//create file which can access via cURL.
@@ -176,8 +178,8 @@ class DashboardController extends Controller
                                 'workspaces' => $workspaces,
                             ]);
                         }
-                        $dashboard1->dataset_id 	= $response->id;
-						$dashboard1->workspace_id	= $workspace->w_id;
+                        $dashboard->dataset_id 	= $response->id;
+						$dashboard->workspace_id	= $workspace->w_id;
 						
 						//The request URL which returns the dataset id of the workspace
 						//if use above dataset_id the datasource response is Datasource ID missing.We are the below dataset for the next request.
@@ -209,13 +211,13 @@ class DashboardController extends Controller
 							{
 							foreach($respns_ds_gw->value as $gateway)
 							{
-							$dashboard1->datasource_id 	= $gateway->id;
-							$dashboard1->gateway_id 	= $gateway->gatewayId; 
-							$dashboard1->pbix_file	 	= 'uploads/'.$uploadedFile->name;
-							$dashboard1->save(false);
+							$dashboard->datasource_id 	= $gateway->id;
+							$dashboard->gateway_id 	= $gateway->gatewayId; 
+							$dashboard->pbix_file	 	= 'uploads/'.$uploadedFile->name;
+							$dashboard->save(false);
 							
 							//PATCH
-							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard1->datasource_id;
+							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;
 							$params = json_encode([
 							"credentialType"=>"Basic",
 								"basicCredentials"=>[

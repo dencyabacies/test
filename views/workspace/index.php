@@ -48,10 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
 				'label' =>'workspace name',
 				'format'=>'raw',
 				'value' =>function($data){
-					return Html::a($data->workspace_name,['dataset/index'],[
+					return Html::a($data->workspace_name,['dashboard/index'],[
 					'data'=>[
 						'method'=>'GET',
-						'params'=>['w_id'=>$data->w_id],
+						'params'=>['workspace_id'=>$data->w_id,'collection_id'=>$data->collection_id],
 					]
 					]);
 				}

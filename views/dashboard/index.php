@@ -39,7 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
 			'label' =>'Pbix File',
 			'format'=>'raw',
 			'value'=>function($data){
-				return !empty($data['pbix_file'])?(Html::a($data->pbix_file,[\Yii::$app->basePath.'/web/'.$data->pbix_file],['download'=>'download'])):(Html::a('Add file',['dashboard/addpbix'],['data'=>[
+				$file=explode("/",$data->pbix_file);
+				return !empty($data['pbix_file'])?(Html::a($file[1],['download','file'=>$data->pbix_file])):(Html::a('Add file',['dashboard/addpbix'],['data'=>[
 					'method'=>'POST',
 					'params'=>[
 						'dashboard_id'=>$data->dashboard_id,
@@ -54,7 +55,13 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'form_data:ntext',
             'workspace.workspace_name',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+			'buttons'=>[
+			'view'=>function($url, $model){
+				return Html::a('<span class="glyphicon glyphicon-eye-open"></span>',['reports/view','id'=>$model->report_id]);
+			},
+			]
+			],
         ],
     ]); ?>
 </div>

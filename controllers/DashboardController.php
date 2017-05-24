@@ -183,7 +183,7 @@ class DashboardController extends Controller
 			//request URL which returns dataset id.
 			$end_url		='https://api.powerbi.com/v1.0/collections/';
             $end_url        .= $collection->collection_name;
-            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dashboard->dashboard_name;
+            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.urlencode($dashboard->dashboard_name);
 			$access_key		= $collection->AppKey;
 			
 			//create file which can access via cURL.

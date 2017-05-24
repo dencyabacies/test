@@ -83,7 +83,6 @@ class Workspace extends \yii\db\ActiveRecord
 	
 	public function doCurl_POST($end_url,$access_key,$params,$content_type,$method)
 	{
-		$end_url=str_replace(" ","%20",$end_url);
         $curl = curl_init();
         curl_setopt_array($curl, array(
           CURLOPT_URL => $end_url,

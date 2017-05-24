@@ -29,8 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		])
 	?>
 	<?= $form->field($model, 'workspace_id')->dropDownList(
-	isset($_REQUEST['workspace_id'])?ArrayHelper::map($workspaces,'w_id','workspace_name'):'',
-	['options'=>isset($_REQUEST['workspace_id'])?[$_REQUEST["workspace_id"]=>["selected"=>true]]:'',
+	ArrayHelper::map($workspaces,'w_id','workspace_name'),[
 	'prompt'=>'Select Workspace']) ?>	
 	<?= $form->field($model, 'prefix')->textInput() ?>
 	

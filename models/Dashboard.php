@@ -19,7 +19,7 @@ use Yii;
  */
 class Dashboard extends \yii\db\ActiveRecord
 {
-   // public $collection_id;
+    public $collection_id;
 	public $file;
 	/**
      * @inheritdoc

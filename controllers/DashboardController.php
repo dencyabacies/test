@@ -198,6 +198,7 @@ class DashboardController extends Controller
 					'workspaces' => $workspaces,
 				]);
 			}
+			print"<script>alert('".$response->id."')</script>";
 			$dashboard->dataset_id 	= $response->id;
 			$dashboard->workspace_id	= $workspace->w_id;
 			

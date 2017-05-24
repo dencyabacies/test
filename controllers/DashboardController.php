@@ -55,8 +55,14 @@ class DashboardController extends Controller
      */
     public function actionView($id)
     {
+		$model 		= $this->findModel($id);
+		$workspace	= Workspace::find()->where(['w_id'=>$model->workspace_id])->one();
+		$collection = Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
+		$reports	= Reports::find()->where(['workspace_id'=>$workspace->w_id,'dataset_id'=>$model->dataset_id])->one();
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' 	=> $model,
+			'collection'=> $collection,
+			'reports'	=> $reports,
         ]);
     }
 
@@ -80,13 +86,17 @@ class DashboardController extends Controller
 			) {
                 // file is uploaded successfully
 				$data = \moonland\phpexcel\Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
-					'setFirstRecordAsKeys' => true, 
-					'setIndexSheetByName' => true, 
+					//'isMultipleSheet'		=> true,
+					'setFirstRecordAsKeys' 	=> true, 
+					'setIndexSheetByName' 	=> true, 
 				]);
+				//To remove empty sheets
+				$data=array_filter(array_map('array_filter', $data));
+				print_r($data);die;
 				$tables = [];
 				
 				//**Naming convention check starts
-				$checkTableName = $this->validateNamingConvention($data);		
+/* 				$checkTableName = $this->validateNamingConvention($data);		
 				if ($checkTableName['status']=='error'){
 					$model->addError("file",$checkTableName['msg']);
 					return $this->render('create', [
@@ -94,21 +104,20 @@ class DashboardController extends Controller
 					'collections' => $collections,
 					'workspaces' => $workspaces
 					]);
-				}
+				} */
 				//**Check Ends..
-
-				foreach($data as $key=>$sheets){					
+				foreach($data as $key=>$sheets){	
 					$datamodel = new DataModel();
 					$datamodel->model_name = $model->prefix."_".$key;					
 					$tables[] = $datamodel->model_name;
-					/*if(!isset($sheets[0])){
+					if(!isset($sheets[0])){
 						$model->addError("file","Excel file requires atleast one sheet.");
 						return $this->render('create', [
 							'model' => $model,
 							'collections' => $collections,
 							'workspaces' => $workspaces
 						]);
-					}*/
+					} 
 					$headers = $sheets[0];
 					$attributes = [];
 					foreach($headers as $header=>$value){
@@ -324,12 +333,12 @@ class DashboardController extends Controller
     {
 		$dashboard	= $this->findModel($id);
 		$reports	= Reports::findOne(['r_id'=>$dashboard->report_id]);
-		$dataset 	= Dataset::findOne(['dataset_id'=>$reports->dataset_id]);
-		$workspace	= Workspace::find()->where(['w_id'=>$dataset->workspace_id])->one();
+		//$dataset 	= Dataset::findOne(['dataset_id'=>$reports->dataset_id]);
+		$workspace	= Workspace::find()->where(['w_id'=>$reports->workspace_id])->one();
 		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
 		
 		//Dataset deletion
-		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$dataset->dataset_id;
+		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$reports->dataset_id;
 		$workspace->doCurl_DELETE($url,$collection->AppKey);
 		
 		//report deletion
@@ -353,6 +362,34 @@ class DashboardController extends Controller
 		   return Yii::$app->response->sendFile($file);
 		} 
 		
+	}
+	
+	/**
+	* Report display
+	*
+	*/
+	
+	public function actionReport($id){
+		
+		$model = Reports::findOne($id);
+		return $this->render('report', [
+            'model' => $model,
+        ]);
+	}
+	
+	/**
+	* Report Generation
+	*
+	*/
+	
+	public function actionReportGenerate($id){
+		print"<script>alert('".$id."')</script>";
+		$dashboard	= $this->findModel($id);
+		$workspace	= Workspace::find()->where(['w_id'=>$dashboard->workspace_id])->one();
+		
+		return $this->render('report/report-generate',[
+			'model'=>$workspace,
+		]);
 	}
 
     /**
@@ -387,11 +424,6 @@ class DashboardController extends Controller
 			$tables[] = $datamodel->model_name;
 			if(!isset($sheets[0])){
 				$model->addError("file","Excel file requires atleast one sheet.");
-				return $this->render('create', [
-					'model' => $model,
-					'collections' => $collections,
-					'workspaces' => $workspaces
-				]);
 			}
 			$headers = $sheets[0];
 			$attributes = [];

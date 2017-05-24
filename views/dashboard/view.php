@@ -28,14 +28,54 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'dashboard_id',
+            //'dashboard_id',
+			[
+				'attribute'=>'collection_name',
+				'value' => $collection->collection_name,
+			],
+			'workspace.workspace_name',
             'dashboard_name',
-            'pbix_file:ntext',
+            //'pbix_file:ntext',
+			[
+				'attribute'=>'pbix_file',
+				'value' => function($data){
+					if(isset($data->pbix_file))
+					{
+						$file=explode("/",$data->pbix_file);
+						return $file[1];
+					}
+					else
+					{
+						return '';
+					}
+				},
+			],
             'description',
             'models:ntext',
-            'report_id:ntext',
-            'form_data:ntext',
-            'workspace_id',
+            //'report_id:ntext',
+            //'form_data:ntext',
+            //'workspace_id',
+			[
+				'attribute'=>'report_guid',
+				'value' => isset($reports->report_guid)?$reports->report_guid:'',
+
+			],
+			[
+				'attribute'=>'report_name',
+				'value' => isset($reports->report_name)?$reports->report_name:'',
+
+			],
+			[
+				'attribute'=>'web_url',
+				'value' => isset($reports->web_url)?$reports->web_url:'',
+
+			],
+			[
+				'attribute'=>'embed_url',
+				'value' => isset($reports->embed_url)?$reports->embed_url:'',
+
+			],
+			
         ],
     ]) ?>
 

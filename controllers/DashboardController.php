@@ -12,6 +12,7 @@ use app\models\Workspace;
 use app\models\Collection;
 use app\models\DataModel;
 use yii\web\UploadedFile;
+use app\models\Reports;
 /**
  * DashboardController implements the CRUD actions for Dashboard model.
  */
@@ -74,9 +75,7 @@ class DashboardController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 			
 			$model->file = UploadedFile::getInstance($model, 'file');
-			if ($model->upload() 
-				//&& $model->save()
-			) {
+			if ($model->upload() ) {
                 // file is uploaded successfully
 				$data = \app\components\PBI_Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
 					'setFirstRecordAsKeys' => true, 
@@ -153,7 +152,7 @@ class DashboardController extends Controller
 	* Uploading the pbix file
 	*/
 	
-	public function actionAddpbix()
+	public function actionAddpbix($id)
 	{
 		
 		$dashboard		= $this->findModel($id);
@@ -179,7 +178,6 @@ class DashboardController extends Controller
 			//create file which can access via cURL.
 			$curl_file = curl_file_create(\Yii::$app->basePath.'/web/uploads/'.$uploadedFile->name,'pbix',$uploadedFile->baseName);
 			$params = ['file' => $curl_file];
-		
             $response	= json_decode($workspace->doCurl_POST($end_url,$access_key,$params,"multipart/form-data","POST"));
 			if(isset($response->error->message)){
 				//flash error message
@@ -209,6 +207,7 @@ class DashboardController extends Controller
 				//Returns the datasource id,gateway id
 				$end_url ='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$datasets->id.'/Default.GetBoundGatewayDatasources';
 
+
 				$respns_ds_gw = json_decode($workspace->doCurl_GET($end_url,$access_key));
 				if(isset($respns_ds_gw->error->message)){
 					//flash error message
@@ -225,6 +224,24 @@ class DashboardController extends Controller
 				$dashboard->datasource_id 	= $gateway->id;
 				$dashboard->gateway_id 	= $gateway->gatewayId; 
 				$dashboard->pbix_file	 	= 'uploads/'.$uploadedFile->name;
+				
+				//report generation with collection id and workspace id
+				$url="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/reports";
+
+				$response = json_decode($workspace->doCurl_GET($url,$access_key));
+				foreach($response->value as $res){
+					if($res->datasetId == $datasets->id){
+					$reports  	= new Reports();
+					$reports->report_name 	= $res->name;
+					$reports->report_guid 	= $res->id;
+					$reports->web_url		= $res->webUrl;
+					$reports->embed_url		= $res->embedUrl;
+					$reports->dataset_id	= $res->datasetId;
+					$reports->workspace_id	= $workspace->w_id;
+					$reports->save(false);
+					$dashboard->report_id 	= $reports->r_id;
+					}
+				}
 				$dashboard->save(false);
 				
 				//PATCH
@@ -243,6 +260,7 @@ class DashboardController extends Controller
 			}
 			
 			return $this->redirect(['dashboard/index']);
+
 		}
 		else
 		{
@@ -303,10 +321,38 @@ class DashboardController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+		$dashboard	= $this->findModel($id);
+		$reports	= Reports::findOne(['r_id'=>$dashboard->report_id]);
+		$dataset 	= Dataset::findOne(['dataset_id'=>$reports->dataset_id]);
+		$workspace	= Workspace::find()->where(['w_id'=>$dataset->workspace_id])->one();
+		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
+		
+		//Dataset deletion
+		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$dataset->dataset_id;
+		$workspace->doCurl_DELETE($url,$collection->AppKey);
+		
+		//report deletion
+		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/reports/'.$reports->report_guid;
+		$workspace->doCurl_DELETE($url,$collection->AppKey);
+		
+        $this->findModel($id)->delete();	
 
         return $this->redirect(['index']);
     }
+	
+	/**
+	* download the pbix file
+	*
+	*/
+	
+	public function actionDownload($file){
+		
+		$filepath=\Yii::$app->basePath.'/web/'.$file;
+		if (file_exists($file)) {
+		   return Yii::$app->response->sendFile($file);
+		} 
+		
+	}
 
     /**
      * Finds the Dashboard model based on its primary key value.

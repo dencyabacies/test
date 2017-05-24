@@ -40,7 +40,6 @@ class Dashboard extends \yii\db\ActiveRecord
 			['prefix','validatePlain'],
 			['prefix','unique'],
             [['workspace_id'], 'integer'],
-            [['dashboard_id'], 'safe'],
 			['file', 'file'],
         ];
     }

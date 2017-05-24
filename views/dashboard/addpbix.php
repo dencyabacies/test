@@ -34,7 +34,8 @@ $(function(){
 		<?= $form->field($model, 'file')->fileInput() ?>
     
         <div class="form-group">
-			<?= Html::hiddenInput('Dashboard[dashboard_id]', $_REQUEST['dashboard_id']) ?>
+			<?php
+			/*Html::hiddenInput('Dashboard[dashboard_id]', $_REQUEST['id'])*/ ?>
             <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
         </div>
     <?php ActiveForm::end(); ?>

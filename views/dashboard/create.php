@@ -28,9 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
 			'onChange' => '$.get("'.Yii::$app->urlManager->createUrl('workspace/workspaceslist?collection_id=').'"+$(this).val(),function(data){$("#dashboard-workspace_id").html(data);})',
 		])
 	?>
+<<<<<<< HEAD
 	<?= $form->field($model, 'workspace_id')->dropDownList(
 	ArrayHelper::map($workspaces,'w_id','workspace_name'),[
 	'prompt'=>'Select Workspace']) ?>	
+=======
+	<?= $form->field($model, 'workspace_id')->dropDownList(ArrayHelper::map($workspaces,'w_id','workspace_name'),
+	['prompt'=>'Select Workspace']) ?>	
+>>>>>>> 60a67cf311261b6d03b6e4c65ef0324a7d0438eb
 	<?= $form->field($model, 'prefix')->textInput() ?>
 	
 	<?= $form->field($model, 'file')->fileInput() ?>

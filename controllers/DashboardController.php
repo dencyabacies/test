@@ -81,22 +81,20 @@ class DashboardController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 			
 			$model->file = UploadedFile::getInstance($model, 'file');
-			if ($model->upload() 
-				//&& $model->save()
-			) {
+			if ($model->upload() ) {
                 // file is uploaded successfully
-				$data = \moonland\phpexcel\Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
-					//'isMultipleSheet'		=> true,
-					'setFirstRecordAsKeys' 	=> true, 
-					'setIndexSheetByName' 	=> true, 
+				$data = \app\components\PBI_Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
+					'setFirstRecordAsKeys' => true, 
+					'setIndexSheetByName' => true, 
 				]);
 				//To remove empty sheets
 				$data=array_filter(array_map('array_filter', $data));
-				print_r($data);die;
+				//print_r($data);die;
 				$tables = [];
 				
 				//**Naming convention check starts
-/* 				$checkTableName = $this->validateNamingConvention($data);		
+
+/* 				$checkTableName = $this->validateNamingConvention($data,$model);		
 				if ($checkTableName['status']=='error'){
 					$model->addError("file",$checkTableName['msg']);
 					return $this->render('create', [
@@ -106,19 +104,21 @@ class DashboardController extends Controller
 					]);
 				} */
 				//**Check Ends..
-				foreach($data as $key=>$sheets){	
+				
+				$data=array_filter(array_map('array_filter', $data));
+				foreach($data as $key=>$sheet){
 					$datamodel = new DataModel();
 					$datamodel->model_name = $model->prefix."_".$key;					
 					$tables[] = $datamodel->model_name;
-					if(!isset($sheets[0])){
+/* 					if(!isset($sheet[0])){
 						$model->addError("file","Excel file requires atleast one sheet.");
 						return $this->render('create', [
 							'model' => $model,
 							'collections' => $collections,
 							'workspaces' => $workspaces
-						]);
-					} 
-					$headers = $sheets[0];
+						]); 
+					} */
+					$headers = $sheet[0];
 					$attributes = [];
 					foreach($headers as $header=>$value){
 						if($header!=''){
@@ -126,12 +126,11 @@ class DashboardController extends Controller
 								$attributes[] = ['field_name'=>$header,'field_type'=>'integer'];
 							else $attributes[] = ['field_name'=>$header,'field_type'=>'text'];							
 						}
-					}
-					
+					}					
 					$datamodel->attributes = serialize($attributes);					
-					if(!empty($headers)&& $datamodel->save()){
+					if($datamodel->save()){
 						// save data too
-						foreach($sheets as $header=>$data){
+						foreach($sheet as $header=>$data){
 							foreach($data as $key=>$d){
 								//eliminate the null keys
 								if($key == '')
@@ -191,86 +190,88 @@ class DashboardController extends Controller
 			$curl_file = curl_file_create(\Yii::$app->basePath.'/web/uploads/'.$uploadedFile->name,'pbix',$uploadedFile->baseName);
 			$params = ['file' => $curl_file];
             $response	= json_decode($workspace->doCurl_POST($end_url,$access_key,$params,"multipart/form-data","POST"));
-                        if(isset($response->error->message)){
-                            //flash error message
-                            Yii::$app->session->setFlash('some_error',  $response->error->message);
-                            return $this->render('create-dataset',[
-								'model'=>$dataset,
-                                'workspaces' => $workspaces,
-                            ]);
-                        }
-                        $dashboard->dataset_id 	= $response->id;
-						$dashboard->workspace_id	= $workspace->w_id;
-						
-						//The request URL which returns the dataset id of the workspace
-						//if use above dataset_id the datasource response is Datasource ID missing.We are the below dataset for the next request.
-						$url = 'https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets';
-						$respns_dtast = json_decode($workspace->doCurl_GET($url,$access_key));
-						if(isset($respns_dtast->error->message)){
-                            //flash error message
-                            Yii::$app->session->setFlash('some_error',  $respns_dtast->error->message);
-                            return $this->render('create-dataset',[
-								'model'=>$dataset,
-                                'workspaces' => $workspaces,
-                            ]);
-                        }
-						foreach($respns_dtast->value as $datasets)
-						{
-							//Returns the datasource id,gateway id
-							$end_url ='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$datasets->id.'/Default.GetBoundGatewayDatasources';
+			if(isset($response->error->message)){
+				//flash error message
+				Yii::$app->session->setFlash('some_error',  $response->error->message);
+				return $this->render('create-dataset',[
+					'model'=>$dataset,
+					'workspaces' => $workspaces,
+				]);
+			}
+			$dashboard->dataset_id 	= $response->id;
+			$dashboard->workspace_id	= $workspace->w_id;
+			
+			//The request URL which returns the dataset id of the workspace
+			//if use above dataset_id the datasource response is Datasource ID missing.We are the below dataset for the next request.
+			$url = 'https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets';
+			$respns_dtast = json_decode($workspace->doCurl_GET($url,$access_key));
+			if(isset($respns_dtast->error->message)){
+				//flash error message
+				Yii::$app->session->setFlash('some_error',  $respns_dtast->error->message);
+				return $this->render('create-dataset',[
+					'model'=>$dataset,
+					'workspaces' => $workspaces,
+				]);
+			}
+			foreach($respns_dtast->value as $datasets)
+			{
+				//Returns the datasource id,gateway id
+				$end_url ='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$datasets->id.'/Default.GetBoundGatewayDatasources';
 
-							$respns_ds_gw = json_decode($workspace->doCurl_GET($end_url,$access_key));
-							if(isset($respns_ds_gw->error->message)){
-								//flash error message
-								Yii::$app->session->setFlash('some_error',  $respns_ds_gw->error->message);
-								return $this->render('create-dataset',[
-									'model'=>$dataset,
-									'workspaces' => $workspaces,
-								]);
-							}
-							if(isset($respns_ds_gw->value))
-							{
-							foreach($respns_ds_gw->value as $gateway)
-							{
-							$dashboard->datasource_id 	= $gateway->id;
-							$dashboard->gateway_id 	= $gateway->gatewayId; 
-							$dashboard->pbix_file	 	= 'uploads/'.$uploadedFile->name;
-							
-							//report generation with collection id and workspace id
-							$url="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/reports";
-		
-							$response = json_decode($workspace->doCurl_GET($url,$access_key));
-							foreach($response->value as $res){
-								if($res->datasetId == $datasets->id){
-								$reports  	= new Reports();
-								$reports->report_name 	= $res->name;
-								$reports->report_guid 	= $res->id;
-								$reports->web_url		= $res->webUrl;
-								$reports->embed_url		= $res->embedUrl;
-								$reports->dataset_id	= $res->datasetId;
-								$reports->workspace_id	= $workspace->w_id;
-								$reports->save(false);
-								$dashboard->report_id 	= $reports->r_id;
-								}
-							}
-							$dashboard->save(false);
-							
-							//PATCH
-							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;
-							$params = json_encode([
-							"credentialType"=>"Basic",
-								"basicCredentials"=>[
-								"username"=>"eqvision",
-								"password"=>"Al@inno17!",
-								]
-							]);
-							$respns_patch = json_decode($workspace->doCurl_POST($patchurl,$access_key,$params,"application/json","PATCH"));
-							}
-							}
-						
-						}
-						
-                        return $this->redirect(['dashboard/index']);
+
+				$respns_ds_gw = json_decode($workspace->doCurl_GET($end_url,$access_key));
+				if(isset($respns_ds_gw->error->message)){
+					//flash error message
+					Yii::$app->session->setFlash('some_error',  $respns_ds_gw->error->message);
+					return $this->render('create-dataset',[
+						'model'=>$dataset,
+						'workspaces' => $workspaces,
+					]);
+				}
+				if(isset($respns_ds_gw->value))
+				{
+				foreach($respns_ds_gw->value as $gateway)
+				{
+				$dashboard->datasource_id 	= $gateway->id;
+				$dashboard->gateway_id 	= $gateway->gatewayId; 
+				$dashboard->pbix_file	 	= 'uploads/'.$uploadedFile->name;
+				
+				//report generation with collection id and workspace id
+				$url="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/reports";
+
+				$response = json_decode($workspace->doCurl_GET($url,$access_key));
+				foreach($response->value as $res){
+					if($res->datasetId == $datasets->id){
+					$reports  	= new Reports();
+					$reports->report_name 	= $res->name;
+					$reports->report_guid 	= $res->id;
+					$reports->web_url		= $res->webUrl;
+					$reports->embed_url		= $res->embedUrl;
+					$reports->dataset_id	= $res->datasetId;
+					$reports->workspace_id	= $workspace->w_id;
+					$reports->save(false);
+					$dashboard->report_id 	= $reports->r_id;
+					}
+				}
+				$dashboard->save(false);
+				
+				//PATCH
+				$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;
+				$params = json_encode([
+				"credentialType"=>"Basic",
+					"basicCredentials"=>[
+					"username"=>"eqvision",
+					"password"=>"Al@inno17!",
+					]
+				]);
+				$respns_patch = json_decode($workspace->doCurl_POST($patchurl,$access_key,$params,"application/json","PATCH"));
+				}
+				}
+			
+			}
+			
+			return $this->redirect(['dashboard/index']);
+
 		}
 		else
 		{
@@ -413,10 +414,10 @@ class DashboardController extends Controller
 	** convention will follow PascalCase
     ** @Created:22-May-2017	
 	*/
-	public function validateNamingConvention($data)
+	public function validateNamingConvention($data,$model)
 	{
 		$errMsg = '';
-		$model = new Dashboard();
+		//$model = new Dashboard();
 		$result = array('status'=>'success','msg'=>'');
 		foreach($data as $key=>$sheets){
 			$datamodel = new DataModel();

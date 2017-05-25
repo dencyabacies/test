@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
       "}";
     $token2 = "{" .
       "\"wid\":\"".$model->workspace->workspace_id."\"," . // workspace id
-      "\"rid\":\"".$model->report_guid."\"," . // report id
+      "\"rid\":\"".$model->report->report_guid."\"," . // report id
       "\"wcn\":\"".$model->workspace->collection->collection_name."\"," . // workspace collection name
       "\"iss\":\"PowerBISDK\"," .
       "\"ver\":\"0.2.0\"," .

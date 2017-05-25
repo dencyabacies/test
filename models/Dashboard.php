@@ -85,4 +85,11 @@ class Dashboard extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Workspace::className(), ['w_id' => 'workspace_id']);
     }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReport()
+    {
+        return $this->hasOne(Report::className(), ['r_id' => 'report_id']);
+    }
 }

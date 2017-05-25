@@ -13,6 +13,7 @@ use app\models\Collection;
 use app\models\DataModel;
 use yii\web\UploadedFile;
 use app\models\Reports;
+use yii\helpers\Html;
 /**
  * DashboardController implements the CRUD actions for Dashboard model.
  */
@@ -190,6 +191,7 @@ class DashboardController extends Controller
 			$curl_file = curl_file_create(\Yii::$app->basePath.'/web/uploads/'.$uploadedFile->name,'pbix',$uploadedFile->baseName);
 			$params = ['file' => $curl_file];
             $response	= json_decode($workspace->doCurl_POST($end_url,$access_key,$params,"multipart/form-data","POST"));
+			//print_r($response);die;
 			if(isset($response->error->message)){
 				//flash error message
 				Yii::$app->session->setFlash('some_error',  $response->error->message);
@@ -198,7 +200,7 @@ class DashboardController extends Controller
 					'workspaces' => $workspaces,
 				]);
 			}
-			$dashboard->dataset_id 	= $response->id;
+			//$dashboard->dataset_id 	= $response->id;
 			$dashboard->workspace_id	= $workspace->w_id;
 			
 			//The request URL which returns the dataset id of the workspace
@@ -215,6 +217,7 @@ class DashboardController extends Controller
 			}
 			foreach($respns_dtast->value as $datasets)
 			{
+				$dashboard->dataset_id 	= $datasets->id;
 				//Returns the datasource id,gateway id
 				$end_url ='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$datasets->id.'/Default.GetBoundGatewayDatasources';
 
@@ -250,10 +253,10 @@ class DashboardController extends Controller
 					$reports->dataset_id	= $res->datasetId;
 					$reports->workspace_id	= $workspace->w_id;
 					$reports->save(false);
-					$dashboard->report_id 	= $reports->r_id;
 					}
 				}
-				$dashboard->save(false);
+				$dashboard->report_id 	= $reports->r_id;
+				
 				
 				//PATCH
 				$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;
@@ -265,6 +268,7 @@ class DashboardController extends Controller
 					]
 				]);
 				$respns_patch = json_decode($workspace->doCurl_POST($patchurl,$access_key,$params,"application/json","PATCH"));
+				$dashboard->save(false);
 				}
 				}
 			
@@ -371,17 +375,21 @@ class DashboardController extends Controller
 	*/
 	
 	public function actionReport($id){
-		
-		if(isset($id))
+
+		$model = $this->findModel($id);
+		if(!empty($model->report_id))
 		{
-			$model = Reports::findOne($id);
+			$Report = Reports::findOne($model->report_id);
 			return $this->render('report', [
 				'model' => $model,
 			]);
 		}
 		else
 		{
-			
+			$error = "<div class='alert alert-warning'><strong>Report is not Generated!</strong> Click the ".Html::a('link',['addpbix','id'=>$id])." to generate the report.</div>";
+			//flash error message
+			Yii::$app->session->setFlash('some_error', $error );
+			return $this->actionIndex();
 		}
 	}
 	
@@ -391,7 +399,6 @@ class DashboardController extends Controller
 	*/
 	
 	public function actionReportGenerate($id){
-		print"<script>alert('".$id."')</script>";
 		$dashboard	= $this->findModel($id);
 		$workspace	= Workspace::find()->where(['w_id'=>$dashboard->workspace_id])->one();
 		

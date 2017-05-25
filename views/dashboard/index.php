@@ -50,18 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'workspace.workspace_name',
 
             ['class' => 'yii\grid\ActionColumn',
-			'template' => '{view} {delete} {report}',
+			'template' => '{view} {delete} {report} {Form}',
 			'buttons'=>[
 			'report'=>function($url, $model){
-				if(isset($model->report_id))
-				{
-					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report','id'=>$model->report_id]);
-				}
-				else
-				{
-					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report-generate','id'=>$model->workspace_id]);					
-				}
+					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report','id'=>$model->report_id]);				
 			},
+			'Form'=>function($url, $model){
+				return Html::a('<span class="glyphicon glyphicon-th-list"></span>',['create-form','id'=>$model->dashboard_id]);	
+			}
 			]
 			],
         ],

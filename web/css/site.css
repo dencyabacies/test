@@ -1,118 +1,118 @@
 html,
 body {
-    height: 100%;
-	/*font-family: 'Arvo' !important;*/
+  height: 100%;
+  /*font-family: 'Arvo' !important;*/
 }
 
 .wrap {
-    min-height: 100%;
-    height: auto;
-    margin: 0 auto -60px;
-    padding: 0 0 60px;
+  min-height: 100%;
+  height: auto;
+  margin: 0 auto -60px;
+  padding: 0 0 60px;
 }
 
 .wrap > .container {
-    padding: 70px 15px 20px;
+  padding: 70px 15px 20px;
 }
 
 .footer {
-    height: 60px;
-    background-color: #f5f5f5;
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
+  height: 60px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
 }
 
 .jumbotron {
-    text-align: center;
-    background-color: transparent;
+  text-align: center;
+  background-color: transparent;
 }
 
 .jumbotron .btn {
-    font-size: 21px;
-    padding: 14px 24px;
+  font-size: 21px;
+  padding: 14px 24px;
 }
 
 .not-set {
-    color: #c55;
-    font-style: italic;
+  color: #c55;
+  font-style: italic;
 }
 
 /* add sorting icons to gridview sort links */
 a.asc:after, a.desc:after {
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: normal;
-    line-height: 1;
-    padding-left: 5px;
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  padding-left: 5px;
 }
 
 a.asc:after {
-    content: /*"\e113"*/ "\e151";
+  content: /*"\e113"*/ "\e151";
 }
 
 a.desc:after {
-    content: /*"\e114"*/ "\e152";
+  content: /*"\e114"*/ "\e152";
 }
 
 .sort-numerical a.asc:after {
-    content: "\e153";
+  content: "\e153";
 }
 
 .sort-numerical a.desc:after {
-    content: "\e154";
+  content: "\e154";
 }
 
 .sort-ordinal a.asc:after {
-    content: "\e155";
+  content: "\e155";
 }
 
 .sort-ordinal a.desc:after {
-    content: "\e156";
+  content: "\e156";
 }
 
 .grid-view th {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 .hint-block {
-    display: block;
-    margin-top: 5px;
-    color: #999;
+  display: block;
+  margin-top: 5px;
+  color: #999;
 }
 
 .error-summary {
-    color: #a94442;
-    background: #fdf7f7;
-    border-left: 3px solid #eed3d7;
-    padding: 10px 20px;
-    margin: 0 0 15px 0;
+  color: #a94442;
+  background: #fdf7f7;
+  border-left: 3px solid #eed3d7;
+  padding: 10px 20px;
+  margin: 0 0 15px 0;
 }
 
 /* align the logout "link" (button in form) of the navbar */
 .nav li > form > button.logout {
-    padding: 15px;
-    border: none;
+  padding: 15px;
+  border: none;
 }
 
 @media(max-width:767px) {
-    .nav li > form > button.logout {
-        display:block;
-        text-align: left;
-        width: 100%;
-        padding: 10px 15px;
-    }
+  .nav li > form > button.logout {
+    display:block;
+    text-align: left;
+    width: 100%;
+    padding: 10px 15px;
+  }
 }
 
 .nav > li > form > button.logout:focus,
 .nav > li > form > button.logout:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .nav > li > form > button.logout:focus {
-    outline: none;
+  outline: none;
 }
 .fields,.field{
 	padding:5px;
@@ -176,7 +176,7 @@ a.desc:after {
   margin: 10px 0px;
 }
 
-select#field {
+select.field_type {
  font-size: 16px;
  width: 100%;
  padding: 7px;
@@ -200,8 +200,8 @@ div.tab {
     /* Style the buttons inside the tab */
     div.tab button {
       display: block;
-      background-color: inherit;
-      color: black;
+      background-color: #7FDE8D;
+      color: #fff;
       padding: 22px 16px;
       width: 100%;
       border: 1px solid #DADADA;
@@ -214,13 +214,13 @@ div.tab {
 
     /* Change background color of buttons on hover */
     div.tab button:hover {
-      background-color: #ddd;
+      background-color: #7FDE8D;
     }
 
     /* Create an active/current "tab button" class */
     div.tab button.active {
       border: 1px solid #DADADA;
-      border-right: none;
+      border-right: 4px solid black;
       background-color: #7FDE8D;
       color: #fff;
     }
@@ -394,7 +394,7 @@ input[type=checkbox] {
   height: 25px;
   width: 25px;
   background-color: transparent;
-  border: 2px solid #7FDE8D;
+  border: 2px solid rgb(242, 97, 97);
   border-radius: 5px;
   position: relative;
   display: inline-block;
@@ -416,7 +416,7 @@ input[type=checkbox] {
   position: absolute;
   height: 0;
   width: 6px;
-  background-color: #F26161;
+  background-color: #7FDE8D;
   display: inline-block;
   -moz-transform-origin: left top;
   -ms-transform-origin: left top;
@@ -451,7 +451,7 @@ input[type=checkbox] {
 }
 
 input[type=checkbox]:checked + .check-box,
-.check-box.checked { border-color: #F26161; }
+.check-box.checked { border-color: #7FDE8D; }
 
 input[type=checkbox]:checked + .check-box::after,
 .check-box.checked::after {
@@ -506,5 +506,14 @@ input[type=checkbox]:checked + .check-box::before,
 #date:focus,
 #date.focus {
   border: solid 3px #969696;
+}
+input.form-control.form-title {
+  border-radius: 5px;
+  font-size: 25px;
+  margin-left: -30px;
+  height: 45px;
+}
+input.form-control,select.form-control{
+	border-radius: 5px;
 }
 /* END FORM-GENERATOR */

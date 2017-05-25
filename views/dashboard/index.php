@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'workspace.workspace_name',
 
             ['class' => 'yii\grid\ActionColumn',
-			'template' => '{view} {update} {delete} {report}',
+			'template' => '{view} {delete} {report}',
 			'buttons'=>[
 			'report'=>function($url, $model){
 				if(isset($model->report_id))

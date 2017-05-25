@@ -296,11 +296,12 @@ class DashboardController extends Controller
 			$tables[$tablename]['attributes'] = unserialize($datamodel->attributes);
 			$tables[$tablename]['form_data'] = unserialize($datamodel->form_data);
 		}
-		if(\Yii::$app->request->post()){
+		if($post = \Yii::$app->request->post()){
 			//handle post data
+			print_r($post);
 		}
-		return 	
-		$this->render('form_generator', [
+		//else 
+		return 	$this->render('form_generator', [
                 'model' => $model,
 				'tables' => $tables,
             ]);

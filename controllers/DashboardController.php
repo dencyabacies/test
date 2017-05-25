@@ -55,8 +55,14 @@ class DashboardController extends Controller
      */
     public function actionView($id)
     {
+		$model 		= $this->findModel($id);
+		$workspace	= Workspace::find()->where(['w_id'=>$model->workspace_id])->one();
+		$collection = Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
+		$reports	= Reports::find()->where(['workspace_id'=>$workspace->w_id,'dataset_id'=>$model->dataset_id])->one();
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' 	=> $model,
+			'collection'=> $collection,
+			'reports'	=> $reports,
         ]);
     }
 
@@ -81,9 +87,13 @@ class DashboardController extends Controller
 					'setFirstRecordAsKeys' => true, 
 					'setIndexSheetByName' => true, 
 				]);
+				//To remove empty sheets
+				$data=array_filter(array_map('array_filter', $data));
+				//print_r($data);die;
 				$tables = [];
 				
 				//**Naming convention check starts
+
 /* 				$checkTableName = $this->validateNamingConvention($data,$model);		
 				if ($checkTableName['status']=='error'){
 					$model->addError("file",$checkTableName['msg']);
@@ -94,6 +104,7 @@ class DashboardController extends Controller
 					]);
 				} */
 				//**Check Ends..
+				
 				$data=array_filter(array_map('array_filter', $data));
 				foreach($data as $key=>$sheet){
 					$datamodel = new DataModel();
@@ -105,7 +116,7 @@ class DashboardController extends Controller
 							'model' => $model,
 							'collections' => $collections,
 							'workspaces' => $workspaces
-						]);
+						]); 
 					} */
 					$headers = $sheet[0];
 					$attributes = [];
@@ -172,7 +183,7 @@ class DashboardController extends Controller
 			//request URL which returns dataset id.
 			$end_url		='https://api.powerbi.com/v1.0/collections/';
             $end_url        .= $collection->collection_name;
-            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dashboard->dashboard_name;
+            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.urlencode($dashboard->dashboard_name);
 			$access_key		= $collection->AppKey;
 			
 			//create file which can access via cURL.
@@ -324,12 +335,12 @@ class DashboardController extends Controller
     {
 		$dashboard	= $this->findModel($id);
 		$reports	= Reports::findOne(['r_id'=>$dashboard->report_id]);
-		$dataset 	= Dataset::findOne(['dataset_id'=>$reports->dataset_id]);
-		$workspace	= Workspace::find()->where(['w_id'=>$dataset->workspace_id])->one();
+		//$dataset 	= Dataset::findOne(['dataset_id'=>$reports->dataset_id]);
+		$workspace	= Workspace::find()->where(['w_id'=>$reports->workspace_id])->one();
 		$collection	= Collection::find()->where(['collection_id'=>$workspace->collection_id])->one();
 		
 		//Dataset deletion
-		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$dataset->dataset_id;
+		$url='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$reports->dataset_id;
 		$workspace->doCurl_DELETE($url,$collection->AppKey);
 		
 		//report deletion
@@ -353,6 +364,34 @@ class DashboardController extends Controller
 		   return Yii::$app->response->sendFile($file);
 		} 
 		
+	}
+	
+	/**
+	* Report display
+	*
+	*/
+	
+	public function actionReport($id){
+		
+		$model = Reports::findOne($id);
+		return $this->render('report', [
+            'model' => $model,
+        ]);
+	}
+	
+	/**
+	* Report Generation
+	*
+	*/
+	
+	public function actionReportGenerate($id){
+		print"<script>alert('".$id."')</script>";
+		$dashboard	= $this->findModel($id);
+		$workspace	= Workspace::find()->where(['w_id'=>$dashboard->workspace_id])->one();
+		
+		return $this->render('report/report-generate',[
+			'model'=>$workspace,
+		]);
 	}
 
     /**

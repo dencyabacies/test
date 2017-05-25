@@ -29,9 +29,7 @@ class PowerbiController extends \yii\web\Controller
 		$workspaces		= Workspace::find()->all();
                 
 		if($dataset->load(Yii::$app->request->post())){
-			print_r($dataset);
 			$dashboard		= Dashboard::findOne($dataset->dashboard_id);
-			echo $dataset->dashboard_id;print_r($dashboard);die;
             $workspace	 	= Workspace::findOne($dashboard->workspace_id);
 			$collection 	= Collection::findOne($dashboard->collection_id);
 			$uploadedFile   = UploadedFile::getInstance($dataset, 'file');
@@ -50,7 +48,6 @@ class PowerbiController extends \yii\web\Controller
 			$params = ['file' => $curl_file];
 		
             $response	= json_decode($workspace->doCurl_POST($end_url,$access_key,$params,"multipart/form-data","POST"));
-			print_r($response);die;
                         if(isset($response->error->message)){
                             //flash error message
                             Yii::$app->session->setFlash('some_error',  $response->error->message);

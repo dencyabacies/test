@@ -53,14 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'template' => '{view} {delete} {report}',
 			'buttons'=>[
 			'report'=>function($url, $model){
-				if(isset($model->report_id))
-				{
 					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report','id'=>$model->report_id]);
-				}
-				else
-				{
-					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report-generate','id'=>$model->workspace_id]);					
-				}
 			},
 			]
 			],

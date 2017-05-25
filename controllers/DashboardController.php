@@ -372,10 +372,17 @@ class DashboardController extends Controller
 	
 	public function actionReport($id){
 		
-		$model = Reports::findOne($id);
-		return $this->render('report', [
-            'model' => $model,
-        ]);
+		if(isset($id))
+		{
+			$model = Reports::findOne($id);
+			return $this->render('report', [
+				'model' => $model,
+			]);
+		}
+		else
+		{
+			
+		}
 	}
 	
 	/**

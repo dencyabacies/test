@@ -31,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             //'dashboard_id',
             'dashboard_name',
             //'pbix_file:ntext',
@@ -53,11 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'template' => '{view} {delete} {report} {Form}',
 			'buttons'=>[
 			'report'=>function($url, $model){
-					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report','id'=>$model->dashboard_id]);	
-					/* return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report'],['data'=>[
-						'method'=>'POST',
-						'params'=>['id'=>trim($model->dashboard_id)],
-					]]); */						
+					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report','id'=>$model->dashboard_id]);					
 			},
 			'Form'=>function($url, $model){
 				return Html::a('<span class="glyphicon glyphicon-th-list"></span>',['create-form','id'=>$model->dashboard_id]);	

@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'format'=>'raw',
 			'value'=>function($data){
 				$file=explode("/",$data->pbix_file);
-				return !empty($data['pbix_file'])?(Html::a($file[1],['download','file'=>$data->pbix_file])."(".Html::a('Change file',['dashboard/addpbix','id'=>$data->dashboard_id]).")"):(Html::a('Add file',['dashboard/addpbix','id'=>$data->dashboard_id]));
+				return !empty($data['pbix_file'])?(Html::a($file[1],['download','file'=>$data->pbix_file])."(".Html::a('Change file',['dashboard/addpbix','id'=>$data->dashboard_id,'change'=>'1']).")"):(Html::a('Add file',['dashboard/addpbix','id'=>$data->dashboard_id]));
 			}
 			],
             'description',

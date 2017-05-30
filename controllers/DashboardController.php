@@ -317,10 +317,10 @@ class DashboardController extends Controller
 			//handle post data
 			//print_r($post);
 			$model->form_data = serialize($post['tables']);
-			$model->save();
-			$this->redirect(['edit-form','id'=>$id]);
+			if($model->save(false))
+			 return $this->redirect(['edit-form','id'=>$id]);
 		}
-		//else 
+		else 
 		return 	$this->render('form_generator', [
                 'model' => $model,
 				'tables' => $tables,

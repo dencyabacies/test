@@ -12,6 +12,7 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
     <div class="tab col-md-2">	
 		<?php 
 		$i=1;
+		$tables = unserialize($model->form_data);		
 		foreach($tables as $name=>$table){ ?>
 		  <button class="tablinks" onclick="openTab(event, '<?=$name?>')" id="<?php echo $i==1?"defaultOpen":""?>"><?=$name?></button>
 		<?php $i++; } ?>
@@ -22,7 +23,7 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 	<?php 
 	$i=1;
 	$form = ActiveForm::begin();
-	foreach($tables as $name=>$fields){ ?>
+	foreach($tables as $name=>$table){ ?>
     <div class="demo tabcontent col-md-10" id="<?=$name?>">
 	<?php  
 		$tab_name = preg_replace('/\s+/', '', $name);
@@ -31,7 +32,7 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 	<!-- FORM TITLE AND PUBLISH STATUS -->
       <div class="your-class col-md-12">
 			<div class="form-group fn col-md-10">
-			  <input class="form-control form-title" placeholder="Enter the form title" type="text" name="tables[<?=$tab_name?>][form_title]" value="<?=$name_exploded[1]?>" >
+			  <input class="form-control form-title" placeholder="Enter the form title" type="text" name="tables[<?=$tab_name?>][form_title]" value="<?=$table['form_title']?>" >
 			  <span class="underline"></span>
 			</div>
 			<div class="form-group cb col-md-2">
@@ -49,7 +50,7 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
         <div class="panel panel-default">
 			<?php 
 			$f_index = 0;
-			foreach($fields['attributes'] as $field){
+			foreach($table['fields'] as $field){
 			$field_name = preg_replace('/\s+/', '', $field['field_name']);
 			$identifier = "{$tab_name}_{$field_name}";	
 			?>
@@ -74,20 +75,20 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 						  <div class="form-group field-name">
 							<label for="f-name">Field Name</label>
 							<input type="hidden" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][field_name]"  value="<?= $field['field_name'] ?>">
-							<input type="text" class="form-control" id="id-fieldname" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][field_display_name]" value="<?= $field['field_name'] ?>">
+							<input type="text" class="form-control" id="id-fieldname" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][field_display_name]" value="<?= $field['field_display_name'] ?>">
 						  </div>
 						</div>
 						<!-- FIELD NAME -->
 						
 						<!-- FIELD TYPE -->
 						<div class="col-md-3">
-						  <select class="form-control field_type select-options" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][field_type]" id="<?=$identifier?>">
+						  <select class="form-control field_type select-options" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][field_type]" id="<?=$identifier?>" value="<?= $field['field_type']?>">
 							<!--<option value="">--Select Field Type--</option>-->
-							<option value="hidden">Hidden</option> <!-- No Secondary Options -->
-							<option value="text">Text Input</option> <!-- No Secondary Options -->
-							<option value="textarea">Text Area</option> <!-- No Secondary Options -->
-							<option value="date-input">Date Input</option> 
-							<option value="dropdown">DropDown List</option>
+							<option value="hidden" <?= $field['field_type']=='hidden'?"selected":"" ?>>Hidden</option> <!-- No Secondary Options -->
+							<option value="text" <?= $field['field_type']=='text'?"selected":"" ?>>Text Input</option> <!-- No Secondary Options -->
+							<option value="textarea" <?= $field['field_type']=='textarea'?"selected":"" ?>>Text Area</option> <!-- No Secondary Options -->
+							<option value="date-input" <?= $field['field_type']=='date-input'?"selected":"" ?>>Date Input</option> 
+							<option value="dropdown" <?= $field['field_type']=='dropdown'?"selected":"" ?>>DropDown List</option>
 							<option value="default-value">Text Input with Default value</option>
 						  </select>
 						</div>
@@ -96,26 +97,26 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 						<!-- FIELD TYPE OPTIONS -->
 						<div class="col-md-3">
 							
-							<div class="form-group d-format" id="<?=$identifier?>_d-format">
+							<div class="form-group d-format" id="<?=$identifier?>_d-format" <?= $field['field_type']=='date-input'?"style='display:block'":"" ?>>
 								<label>Selecct a date format:</label>
 								<select class="date_format_select form-control" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][options][dateformat]">
-									<option value="mm/dd/yy">Default - mm/dd/yy</option>
-									<option value="yy-mm-dd">ISO 8601 - yy-mm-dd</option>
-									<option value="d M, y">Short - d M, y</option>
-									<option value="d MM, y">Medium - d MM, y</option>
-									<option value="DD, d MM, yy">Full - DD, d MM, yy</option>
-									<option value="'day' d 'of' MM 'in the year' yy">With text - 'day' d 'of' MM 'in the year' yy</option>
+									<option value="mm/dd/yy" <?= $field['options']['dateformat']=='mm/dd/yy'?"selected":"" ?>>Default - mm/dd/yy</option>
+									<option value="yy-mm-dd" <?= $field['options']['dateformat']=='yy-mm-dd'?"selected":"" ?>>ISO 8601 - yy-mm-dd</option>
+									<option value="d M, y" <?= $field['options']['dateformat']=='d M, y'?"selected":"" ?>>Short - d M, y</option>
+									<option value="d MM, y" <?= $field['options']['dateformat']=='d MM, y'?"selected":"" ?>>Medium - d MM, y</option>
+									<option value="DD, d MM, yy" <?= $field['options']['dateformat']=='DD, d MM, yy'?"selected":"" ?>>Full - DD, d MM, yy</option>
+									<option value="'day' d 'of' MM 'in the year' yy" <?= $field['options']['dateformat']=="'day' d 'of' MM 'in the year' yy"?"selected":"" ?>>With text - 'day' d 'of' MM 'in the year' yy</option>
 								</select>
 							</div>
 							
-							<div class="dropdown column-dropdown" id="<?=$identifier?>_column-dropdown">
+							<div class="dropdown column-dropdown" id="<?=$identifier?>_column-dropdown" <?= $field['field_type']=='dropdown'?"style='display:block'":"" ?>>
 								<label for="default-value">DropDown Options</label>
-								<textarea class="form-control" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][options][dropdown_options]" placeholder="Enter default values as comma separeted"></textarea>
+								<textarea class="form-control" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][options][dropdown_options]" placeholder="Enter default values as comma separeted"><?=$field['options']['dropdown_options']?></textarea>
 							</div>
 							
-							<div class="form-group default-value" id="<?=$identifier?>_default-value">
+							<div class="form-group default-value" id="<?=$identifier?>_default-value" <?= $field['field_type']=='default-value'?"style='display:block'":"" ?>>
 							  <label for="default-value">Default Value</label>
-							  <input type="text" class="form-control" id="id-default-value" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][options][default_text]">
+							  <input type="text" class="form-control" id="id-default-value" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][options][default_text]" value="<?=$field['options']['default_text']?>">
 							</div>
 
 							

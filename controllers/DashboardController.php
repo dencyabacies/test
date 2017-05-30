@@ -291,15 +291,16 @@ class DashboardController extends Controller
 		$model = $this->findModel($id);
 		if($post = \Yii::$app->request->post()){
 			//handle post data
-			//print_r($post);
+			//print_r($post);die;
 			$model->form_data = serialize($post['tables']);
-			$model->save();
-			$this->redirect(['edit-form','id'=>$id]);
+			if($model->save(false))
+				$this->redirect(['edit-form','id'=>$id]);
 		}else
 		return 	$this->render('form_editor', [
                 'model' => $model
             ]);		
 	}
+	
 	public function actionCreateForm($id){
 		$model = $this->findModel($id);
 		if($model->form_data!='')
@@ -315,7 +316,7 @@ class DashboardController extends Controller
 		}
 		if($post = \Yii::$app->request->post()){
 			//handle post data
-			//print_r($post);
+			//print_r($post);die;
 			$model->form_data = serialize($post['tables']);
 			if($model->save(false))
 			 return $this->redirect(['edit-form','id'=>$id]);

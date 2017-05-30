@@ -284,9 +284,23 @@ class DashboardController extends Controller
 		}
 	}
 
-
+	public function actionEditForm($id){
+		$model = $this->findModel($id);
+		if($post = \Yii::$app->request->post()){
+			//handle post data
+			//print_r($post);
+			$model->form_data = serialize($post['tables']);
+			$model->save();
+			$this->redirect(['edit-form','id'=>$id]);
+		}else
+		return 	$this->render('form_editor', [
+                'model' => $model
+            ]);		
+	}
 	public function actionCreateForm($id){
 		$model = $this->findModel($id);
+		if($model->form_data!='')
+			$this->redirect(['edit-form','id'=>$id]);
 		$tablenames = unserialize($model->models);
 		$tables = [];
 		foreach($tablenames as $tablename){
@@ -298,7 +312,10 @@ class DashboardController extends Controller
 		}
 		if($post = \Yii::$app->request->post()){
 			//handle post data
-			print_r($post);
+			//print_r($post);
+			$model->form_data = serialize($post['tables']);
+			$model->save();
+			$this->redirect(['edit-form','id'=>$id]);
 		}
 		//else 
 		return 	$this->render('form_generator', [

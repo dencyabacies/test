@@ -38,7 +38,7 @@ class Dashboard extends \yii\db\ActiveRecord
             [['dashboard_name', 'workspace_id','prefix'], 'required'],
             [['dashboard_name', 'pbix_file', 'description', 'models', 'report_id', 'form_data','dataset_id', 'datasource_id', 'gateway_id'], 'string'],
 			['prefix','validatePlain'],
-			['prefix','unique'],
+			['prefix','unique','except'=>'clone'],
             [['workspace_id'], 'integer'],
 			['file', 'file'],
 			['dashboard_name','string','on'=>'clone'],

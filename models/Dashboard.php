@@ -41,6 +41,8 @@ class Dashboard extends \yii\db\ActiveRecord
 			['prefix','unique'],
             [['workspace_id'], 'integer'],
 			['file', 'file'],
+			['dashboard_name','string','on'=>'clone'],
+			
         ];
     }
 	

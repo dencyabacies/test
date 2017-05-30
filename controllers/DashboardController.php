@@ -95,7 +95,7 @@ class DashboardController extends Controller
 				
 				//**Naming convention check starts
 
-/* 				$checkTableName = $this->validateNamingConvention($data,$model);		
+ 				$checkTableName = $this->validateNamingConvention($data,$model);		
 				if ($checkTableName['status']=='error'){
 					$model->addError("file",$checkTableName['msg']);
 					return $this->render('create', [
@@ -103,7 +103,7 @@ class DashboardController extends Controller
 					'collections' => $collections,
 					'workspaces' => $workspaces
 					]);
-				} */
+				} 
 				//**Check Ends..
 				
 				$data=array_filter(array_map('array_filter', $data));
@@ -393,6 +393,36 @@ class DashboardController extends Controller
 			return $this->actionIndex();
 		}
 	}
+	
+	/**
+	*
+	* Clone the dashboard
+	* @return dashboard_name,description,collection_id,workspace_id,prefix
+	*/
+	
+	public function actionCopyDashboard($id){
+		
+		$model = $this->findModel($id);
+		if ($model->load(Yii::$app->request->post()))
+		{
+			$dashboard = new Dashboard();
+			//$dashboard->attributes 	= $model->attributes;
+			$dashboard->dashboard_name  = $model->dashboard_name;
+			$dashboard->description		= $model->description;
+			$dashboard->collection_id	= $model->collection_id;
+			$dashboard->workspace_id	= $model->workspace_id;
+			$dashboard->prefix			= $model->prefix;
+			$dashboard->save(false);
+			return $this->redirect(['index']);
+		}
+		else
+		{
+			$model->scenario = 'clone';
+			return $this->render('clone',[
+				'model'=>$model,
+			]);
+		}
+	}
 
     /**
      * Finds the Dashboard model based on its primary key value.
@@ -462,7 +492,8 @@ class DashboardController extends Controller
 	{
 		$result['sheet'] = array('status'=>'success','msg'=>'');
 		$result['column'] = array('status'=>'success','msg'=>'');
-		if (preg_match('/[^a-zA-Z_]/',$tableName)){
+		//if (preg_match('/[^a-zA-Z_]/',$tableName)){
+		if(!preg_match('/^[a-zA-Z_\/\s\d]+$/i',$tableName)){	
 		    //Not a valid Name			
 			$result['sheet'] = array('status'=>'error','msg'=>$sheetName);
 		}
@@ -475,7 +506,8 @@ class DashboardController extends Controller
 		$invalidColumn = array();
 		foreach($attributes as $attribute){
 			$columnName = $attribute['field_name'];
-			if (preg_match('/[^a-zA-Z_]/',$columnName)){
+			//if (preg_match('/[^a-zA-Z_]/',$columnName)){
+			if(!preg_match('/^[a-zA-Z_\/\s\d]+$/i',$columnName)){
 		        //Not a valid column Name			    
 				$invalidColumn[] = $columnName;		
 		    }

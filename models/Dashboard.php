@@ -41,6 +41,8 @@ class Dashboard extends \yii\db\ActiveRecord
 			['prefix','unique'],
             [['workspace_id'], 'integer'],
 			['file', 'file'],
+			['dashboard_name','string','on'=>'clone'],
+			
         ];
     }
 	
@@ -90,6 +92,6 @@ class Dashboard extends \yii\db\ActiveRecord
      */
     public function getReport()
     {
-        return $this->hasOne(Report::className(), ['r_id' => 'report_id']);
+        return $this->hasOne(Reports::className(), ['r_id' => 'report_id']);
     }
 }

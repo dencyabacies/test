@@ -13,6 +13,7 @@ use app\models\Collection;
 use app\models\DataModel;
 use yii\web\UploadedFile;
 use app\models\Reports;
+use yii\helpers\Html;
 /**
  * DashboardController implements the CRUD actions for Dashboard model.
  */
@@ -94,7 +95,7 @@ class DashboardController extends Controller
 				
 				//**Naming convention check starts
 
-/* 				$checkTableName = $this->validateNamingConvention($data,$model);		
+ 				$checkTableName = $this->validateNamingConvention($data,$model);		
 				if ($checkTableName['status']=='error'){
 					$model->addError("file",$checkTableName['msg']);
 					return $this->render('create', [
@@ -102,7 +103,7 @@ class DashboardController extends Controller
 					'collections' => $collections,
 					'workspaces' => $workspaces
 					]);
-				} */
+				} 
 				//**Check Ends..
 				
 				$data=array_filter(array_map('array_filter', $data));
@@ -163,7 +164,7 @@ class DashboardController extends Controller
 	* Uploading the pbix file
 	*/
 	
-	public function actionAddpbix($id)
+	public function actionAddpbix($id,$change='')
 	{
 		
 		$dashboard		= $this->findModel($id);
@@ -179,11 +180,11 @@ class DashboardController extends Controller
 			
 			//Saving the file to local directory for cURL access.
 			$uploadedFile->saveAs('uploads/'.$uploadedFile->name);
-			
+			$rand=($change==1)?'_'.rand(1,100):'';
 			//request URL which returns dataset id.
 			$end_url		='https://api.powerbi.com/v1.0/collections/';
             $end_url        .= $collection->collection_name;
-            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.urlencode($dashboard->dashboard_name);
+            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.urlencode($dashboard->dashboard_name.$rand);
 			$access_key		= $collection->AppKey;
 			
 			//create file which can access via cURL.
@@ -199,7 +200,7 @@ class DashboardController extends Controller
 					'workspaces' => $workspaces,
 				]);
 			}
-			$dashboard->dataset_id 	= $response->id;
+			//$dashboard->dataset_id 	= $response->id;
 			$dashboard->workspace_id	= $workspace->w_id;
 			
 			//The request URL which returns the dataset id of the workspace
@@ -216,6 +217,7 @@ class DashboardController extends Controller
 			}
 			foreach($respns_dtast->value as $datasets)
 			{
+				$dashboard->dataset_id 	= $datasets->id;
 				//Returns the datasource id,gateway id
 				$end_url ='https://api.powerbi.com/v1.0/collections/'.$collection->collection_name.'/workspaces/'.$workspace->workspace_id.'/datasets/'.$datasets->id.'/Default.GetBoundGatewayDatasources';
 
@@ -251,10 +253,10 @@ class DashboardController extends Controller
 					$reports->dataset_id	= $res->datasetId;
 					$reports->workspace_id	= $workspace->w_id;
 					$reports->save(false);
-					$dashboard->report_id 	= $reports->r_id;
 					}
 				}
-				$dashboard->save(false);
+				$dashboard->report_id 	= $reports->r_id;
+				
 				
 				//PATCH
 				$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;
@@ -266,6 +268,7 @@ class DashboardController extends Controller
 					]
 				]);
 				$respns_patch = json_decode($workspace->doCurl_POST($patchurl,$access_key,$params,"application/json","PATCH"));
+				$dashboard->save(false);
 				}
 				}
 			
@@ -390,26 +393,52 @@ class DashboardController extends Controller
 	*/
 	
 	public function actionReport($id){
-		
-		$model = Reports::findOne($id);
-		return $this->render('report', [
-            'model' => $model,
-        ]);
+
+		$model = $this->findModel($id);
+		if(!empty($model->report_id))
+		{
+			$Report = Reports::findOne($model->report_id);
+			return $this->render('report', [
+				'model' => $model,
+			]);
+		}
+		else
+		{
+			$error = "<div class='alert alert-warning'><strong>Report is not Generated!</strong> Click the ".Html::a('link',['addpbix','id'=>$id])." to generate the report.</div>";
+			//flash error message
+			Yii::$app->session->setFlash('some_error', $error );
+			return $this->actionIndex();
+		}
 	}
 	
 	/**
-	* Report Generation
 	*
+	* Clone the dashboard
+	* @return dashboard_name,description,collection_id,workspace_id,prefix
 	*/
 	
-	public function actionReportGenerate($id){
-		print"<script>alert('".$id."')</script>";
-		$dashboard	= $this->findModel($id);
-		$workspace	= Workspace::find()->where(['w_id'=>$dashboard->workspace_id])->one();
+	public function actionCopyDashboard($id){
 		
-		return $this->render('report/report-generate',[
-			'model'=>$workspace,
-		]);
+		$model = $this->findModel($id);
+		if ($model->load(Yii::$app->request->post()))
+		{
+			$dashboard = new Dashboard();
+			//$dashboard->attributes 	= $model->attributes;
+			$dashboard->dashboard_name  = $model->dashboard_name;
+			$dashboard->description		= $model->description;
+			$dashboard->collection_id	= $model->collection_id;
+			$dashboard->workspace_id	= $model->workspace_id;
+			$dashboard->prefix			= $model->prefix;
+			$dashboard->save(false);
+			return $this->redirect(['index']);
+		}
+		else
+		{
+			$model->scenario = 'clone';
+			return $this->render('clone',[
+				'model'=>$model,
+			]);
+		}
 	}
 
     /**
@@ -480,7 +509,8 @@ class DashboardController extends Controller
 	{
 		$result['sheet'] = array('status'=>'success','msg'=>'');
 		$result['column'] = array('status'=>'success','msg'=>'');
-		if (preg_match('/[^a-zA-Z_]/',$tableName)){
+		//if (preg_match('/[^a-zA-Z_]/',$tableName)){
+		if(!preg_match('/^[a-zA-Z_\/\s\d]+$/i',$tableName)){	
 		    //Not a valid Name			
 			$result['sheet'] = array('status'=>'error','msg'=>$sheetName);
 		}
@@ -493,7 +523,8 @@ class DashboardController extends Controller
 		$invalidColumn = array();
 		foreach($attributes as $attribute){
 			$columnName = $attribute['field_name'];
-			if (preg_match('/[^a-zA-Z_]/',$columnName)){
+			//if (preg_match('/[^a-zA-Z_]/',$columnName)){
+			if(!preg_match('/^[a-zA-Z_\/\s\d]+$/i',$columnName)){
 		        //Not a valid column Name			    
 				$invalidColumn[] = $columnName;		
 		    }

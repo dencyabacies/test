@@ -31,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             //'dashboard_id',
             'dashboard_name',
             //'pbix_file:ntext',
@@ -40,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'format'=>'raw',
 			'value'=>function($data){
 				$file=explode("/",$data->pbix_file);
-				return !empty($data['pbix_file'])?(Html::a($file[1],['download','file'=>$data->pbix_file])):(Html::a('Add file',['dashboard/addpbix','id'=>$data->dashboard_id]));
+				return !empty($data['pbix_file'])?(Html::a($file[1],['download','file'=>$data->pbix_file])."(".Html::a('Change file',['dashboard/addpbix','id'=>$data->dashboard_id,'change'=>'1']).")"):(Html::a('Add file',['dashboard/addpbix','id'=>$data->dashboard_id]));
 			}
 			],
             'description',
@@ -50,14 +49,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'workspace.workspace_name',
 
             ['class' => 'yii\grid\ActionColumn',
-			'template' => '{view} {delete} {report} {Form}',
+			'template' => '{view} {delete} {report} {Form} {clone}',
 			'buttons'=>[
 			'report'=>function($url, $model){
-					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report','id'=>$model->report_id]);				
+					return Html::a('<span class="glyphicon glyphicon-dashboard"></span>',['report','id'=>$model->dashboard_id],['title'=>'dashboard']);					
 			},
 			'Form'=>function($url, $model){
-				return Html::a('<span class="glyphicon glyphicon-th-list"></span>',['create-form','id'=>$model->dashboard_id]);	
+				return Html::a('<span class="glyphicon glyphicon-th-list"></span>',['create-form','id'=>$model->dashboard_id],['title'=>'Form-Generator']);	
+			},
+			'clone'=>function($url, $model){
+				return Html::a('<span class="glyphicon glyphicon-duplicate"></span>',['copy-dashboard','id'=>$model->dashboard_id],['title'=>'Copy Dashboard']);	
 			}
+			
 			]
 			],
         ],

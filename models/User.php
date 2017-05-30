@@ -41,6 +41,8 @@ class User extends ActiveRecord implements IdentityInterface
             TimestampBehavior::className(),
         ];
     }
+	
+	
     /**
      * @inheritdoc
      */
@@ -56,6 +58,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['email'], 'unique','targetClass' => '\app\models\User', 'message' => 'This email address has already been taken.'],
 			
 			[['role'], 'string'],
+			[['auth_key','password_hash'], 'safe'],
             [['email'],'email'],
 			
         ];
@@ -76,17 +79,44 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @inheritdoc
      */
+	 
+	  
     public static function findIdentity($id)
     {
         return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
+	
+	
+	 
+	
     /**
      * @inheritdoc
      */
+	  
+	/*  
     public static function findIdentityByAccessToken($token, $type = null)
     {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
+	  */
+	 
+	/* public function fields()
+	{
+		$fields = parent::fields();
+		
+		unset($fields['auth_key'], $fields['password_hash'], $fields['created_at'], $fields['updated_at'], $fields['password_reset_token'], $fields['access_token'], $fields['status']);
+	
+		return $fields;
+	} */
+	
+	 public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['access_token' => $token]);
+    }
+
+	  
+
+	 
     /**
      * Finds user by username
      *

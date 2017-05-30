@@ -423,13 +423,14 @@ class DashboardController extends Controller
 		if ($model->load(Yii::$app->request->post()))
 		{
 			$dashboard = new Dashboard();
+			$dashboard->scenario = 'clone';
 			//$dashboard->attributes 	= $model->attributes;
 			$dashboard->dashboard_name  = $model->dashboard_name;
 			$dashboard->description		= $model->description;
 			$dashboard->collection_id	= $model->collection_id;
 			$dashboard->workspace_id	= $model->workspace_id;
 			$dashboard->prefix			= $model->prefix;
-			$dashboard->save(false);
+			$dashboard->save();
 			return $this->redirect(['index']);
 		}
 		else

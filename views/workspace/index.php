@@ -25,7 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Workspace', ['powerbi/create-workspace'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Workspace', ['workspace/create-workspace'], ['class' => 'btn btn-success','data'=>[
+					'method'=>'POST',
+					'params'=>[
+						'collection_id'=>isset($_REQUEST['collection_id'])?$_REQUEST['collection_id']:'',
+					]
+		]]) ?>
 		<?= isset($_REQUEST['collection_id'])?Html::a('Sync', ['sync'], ['class' => 'btn btn-success','data'=>[
 			'method'=>'POST',
 			'params'=>['collection_id'=>$_REQUEST['collection_id']],
@@ -43,10 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
 				'label' =>'workspace name',
 				'format'=>'raw',
 				'value' =>function($data){
-					return Html::a($data->workspace_name,['dataset/index'],[
+					return Html::a($data->workspace_name,['dashboard/index'],[
 					'data'=>[
 						'method'=>'GET',
-						'params'=>['w_id'=>$data->w_id],
+						'params'=>['workspace_id'=>$data->w_id,'collection_id'=>$data->collection_id],
 					]
 					]);
 				}

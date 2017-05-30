@@ -60,5 +60,5 @@ class DataModel extends \yii\db\ActiveRecord
 		$migration->createTable($this->model_name, $columns);
 		$migration->addForeignKey('eq_customer_'.$this->model_name, $this->model_name, 'eq_customer_id', 'eq_customers', 'eq_customer_id', null, null );
 		return true;
-	}
+	}	
 }

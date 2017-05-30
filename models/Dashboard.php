@@ -36,11 +36,13 @@ class Dashboard extends \yii\db\ActiveRecord
     {
         return [
             [['dashboard_name', 'workspace_id','prefix'], 'required'],
-            [['dashboard_name', 'pbix_file', 'description', 'models', 'report_id', 'form_data'], 'string'],
+            [['dashboard_name', 'pbix_file', 'description', 'models', 'report_id', 'form_data','dataset_id', 'datasource_id', 'gateway_id'], 'string'],
 			['prefix','validatePlain'],
-			['prefix','unique'],
+			['prefix','unique','except'=>'clone'],
             [['workspace_id'], 'integer'],
 			['file', 'file'],
+			['dashboard_name','string','on'=>'clone'],
+			
         ];
     }
 	
@@ -84,5 +86,12 @@ class Dashboard extends \yii\db\ActiveRecord
     public function getWorkspace()
     {
         return $this->hasOne(Workspace::className(), ['w_id' => 'workspace_id']);
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReport()
+    {
+        return $this->hasOne(Reports::className(), ['r_id' => 'report_id']);
     }
 }

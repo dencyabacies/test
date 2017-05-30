@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'collection_id',
             'collection_name',
             'AppKey',
+			
         ],
     ]) ?>
 

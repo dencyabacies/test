@@ -8,6 +8,7 @@ use app\models\Collection;
 use app\models\Dataset;
 use yii\web\UploadedFile;
 use app\models\Dashboard;
+use app\models\Datasets;
 
 class PowerbiController extends \yii\web\Controller
 {
@@ -18,58 +19,19 @@ class PowerbiController extends \yii\web\Controller
     }
 	
 	/**
-	* @creating workspace
-	* @returns workspace_id
-	*/
-    public function actionCreateWorkspace()
-    {
-		$workspace      = new Workspace();  
-		$collections 	= Collection::find()->all();
-                
-		if($workspace->load(Yii::$app->request->post())){
-            $collection 	= Collection::findOne($workspace->collection_id);
-			$end_url		='https://api.powerbi.com/v1.0/collections/';
-            $end_url        .= $collection->collection_name;
-            $end_url        .='/workspaces';
-			$access_key	= $collection->AppKey;
-			$params = "name={$workspace->workspace_name}";
-                        $response       = json_decode($workspace->doCurl_POST($end_url,$access_key,$params,"application/x-www-form-urlencoded","POST"));
-                        if(isset($response->error)){
-                            //flash error message
-                            Yii::$app->session->setFlash('some_error',  $response->error->message);
-                            return $this->render('create-workspace',[
-								'model'=>$workspace,
-                                'collections' => $collections,
-                            ]);
-                        }
-                        $workspace->workspace_id = $response->workspaceId;
-						$workspace->save(false);
-
-                        return $this->redirect(['workspace/index']);
-		}
-		else
-		{
-			return $this->render('create-workspace',[
-				'model'=>$workspace,
-                'collections' => $collections,
-			]);
-		}
-    }
-	
-	/**
 	* @create Dataset
 	* @returns Dataset_id,datasource_id,gateway_id
 	*/
 	public function actionCreateDataset()
     {
-		$dataset      	= new Dataset();  
-		$dashboard		= new Dashboard();
+		$dataset      	= new Datasets();  
 		$collections	= Collection::find()->all();
 		$workspaces		= Workspace::find()->all();
                 
 		if($dataset->load(Yii::$app->request->post())){
-            $workspace	 	= Workspace::findOne($dataset->workspace_id);
-			$collection 	= Collection::findOne($dataset->collection_id);
+			$dashboard		= Dashboard::findOne($dataset->dashboard_id);
+            $workspace	 	= Workspace::findOne($dashboard->workspace_id);
+			$collection 	= Collection::findOne($dashboard->collection_id);
 			$uploadedFile   = UploadedFile::getInstance($dataset, 'file');
 			
 			//Saving the file to local directory for cURL access.
@@ -78,7 +40,7 @@ class PowerbiController extends \yii\web\Controller
 			//request URL which returns dataset id.
 			$end_url		='https://api.powerbi.com/v1.0/collections/';
             $end_url        .= $collection->collection_name;
-            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dataset->dataset_name;
+            $end_url        .='/workspaces/'.$workspace->workspace_id.'/imports?datasetDisplayName='.$dashboard->dashboard_name;
 			$access_key		= $collection->AppKey;
 			
 			//create file which can access via cURL.
@@ -94,8 +56,8 @@ class PowerbiController extends \yii\web\Controller
                                 'workspaces' => $workspaces,
                             ]);
                         }
-                        $dataset->dataset_id 	= $response->id;
-						$dataset->workspace_id	= $workspace->w_id;
+                        $dashboard->dataset_id 	= $response->id;
+						$dashboard->workspace_id	= $workspace->w_id;
 						
 						//The request URL which returns the dataset id of the workspace
 						//if use above dataset_id the datasource response is Datasource ID missing.We are the below dataset for the next request.
@@ -127,17 +89,13 @@ class PowerbiController extends \yii\web\Controller
 							{
 							foreach($respns_ds_gw->value as $gateway)
 							{
-							$dataset->datasource_id = $gateway->id;
-							$dataset->gateway_id 	= $gateway->gatewayId; 
-							$dataset->save(false);
-							
-							$dashboard->dashboard_name 	= $dataset->dashboard_name;
+							$dashboard->datasource_id = $gateway->id;
+							$dashboard->gateway_id 	= $gateway->gatewayId; 
 							$dashboard->pbix_file	 	= 'uploads/'.$uploadedFile->name;
-							$dashboard->description 	= $dataset->description;
 							$dashboard->save(false);
 							
 							//PATCH
-							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dataset->datasource_id;
+							$patchurl="https://api.powerbi.com/v1.0/collections/".$collection->collection_name."/workspaces/".$workspace->workspace_id."/gateways/".$gateway->gatewayId."/datasources/".$dashboard->datasource_id;
 							$params = json_encode([
 							"credentialType"=>"Basic",
 								"basicCredentials"=>[

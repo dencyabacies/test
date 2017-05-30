@@ -14,7 +14,7 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 		$i=1;
 		$tables = unserialize($model->form_data);		
 		foreach($tables as $name=>$table){ ?>
-		  <button class="tablinks" onclick="openTab(event, '<?=$name?>')" id="<?php echo $i==1?"defaultOpen":""?>"><?=$name?></button>
+		  <button class="tablinks" onclick="openTab(event, '<?=$name?>')" id="<?= $i==1?"defaultOpen":""?>" <?= $table['is_published']==0?'style="background-color: rgb(242, 97, 97);"':'' ?> ><?=$name?></button>
 		<?php $i++; } ?>
     </div>		
 	<!-- Vertical Tabs Ends here -->
@@ -37,7 +37,8 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 			</div>
 			<div class="form-group cb col-md-2">
 			Publish
-			  <input type="checkbox" data_tid="<?=$tab_name?>" id="<?=$tab_name?>_visible" class="un-select" name="tables[<?=$tab_name?>][is_published]" checked="true"/>
+			  <input type="hidden" name="tables[<?=$tab_name?>][is_published]" value='0'/>
+			  <input type="checkbox" data_tid="<?=$tab_name?>" id="<?=$tab_name?>_visible" class="un-select" name="tables[<?=$tab_name?>][is_published]" <?= $table['is_published']==1?'checked="true"':'' ?> />
 			  <label for="<?=$tab_name?>_visible" class="check-box"></label>
 			</div>
 	<input type="hidden" name="tables[<?=$tab_name?>][model_name]" value="<?=$name?>" >

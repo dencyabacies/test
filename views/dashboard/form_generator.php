@@ -36,7 +36,8 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 			</div>
 			<div class="form-group cb col-md-2">
 			Publish
-			  <input type="checkbox" data_tid="<?=$tab_name?>" id="<?=$tab_name?>_visible" class="un-select" name="tables[<?=$tab_name?>][is_published]" checked="true"/>
+			  <input type="hidden" name="tables[<?=$tab_name?>][is_published]" value='0'/>
+			  <input type="checkbox" data_tid="<?=$tab_name?>" id="<?=$tab_name?>_visible" class="un-select" name="tables[<?=$tab_name?>][is_published]" value='1' checked="true"/>
 			  <label for="<?=$tab_name?>_visible" class="check-box"></label>
 			</div>
 	<input type="hidden" name="tables[<?=$tab_name?>][model_name]" value="<?=$name?>" >

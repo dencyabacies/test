@@ -29,20 +29,28 @@ class DashboardController extends ActiveController
 	}
 	
 	/*
-	 * Test action for user endpoint
+	 * Action for getting dashboards
+	 * Params: $page.If null, first 10 results will be showed
+	 * Returns Json
 	 */
-	Public function actionIndex($page){
+	Public function actionIndex($page=null){
         $query = DashboardModel::find();
 		$dataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => [
 				'pageSize' => '10',
-				'page' => ($page-1),
+				'page' => $page,
 			],
         ]);
-		//$this->load($params);
 		return $dataProvider;
 	}
 	
-
+	/*
+	 * Action for getting single dashboard embed details
+	 * Params: $id which is the dashboard id
+	 * Returns Json
+	 */
+	Public function actionEmbed($id){
+		//Return, array of collection name,access key, workspace id, report id
+	}
 }

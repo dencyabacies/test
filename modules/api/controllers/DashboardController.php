@@ -7,7 +7,7 @@ use yii\filters\auth\HttpBearerAuth;
 
 class UserController extends ActiveController
 {
-    public $modelClass = 'app\models\User';
+    public $modelClass = 'app\models\Dashboard';
 	
 	public function behaviors()
 	{

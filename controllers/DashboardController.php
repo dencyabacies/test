@@ -130,7 +130,12 @@ class DashboardController extends Controller
 					}					
 					$datamodel->attributes = serialize($attributes);					
 					if($datamodel->save()){
-						// save data too
+						
+						/* Comment out to save the data as well. 
+						 * Currently disabled to allow data only from wp
+						 */
+						
+						/*
 						foreach($sheet as $header=>$data){
 							foreach($data as $key=>$d){
 								//eliminate the null keys
@@ -140,7 +145,8 @@ class DashboardController extends Controller
 							$data['eq_customer_id'] = \Yii::$app->user->id;
 							\Yii::$app->db->createCommand()
 								->insert($datamodel->model_name, $data)->execute();
-						}
+						} 
+						*/
 					}
 					$model->models = serialize($tables);
 					$model->save();

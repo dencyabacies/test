@@ -75,6 +75,7 @@ class Dashboard extends \yii\db\ActiveRecord
     {
         if ($this->validate()) {
             $this->file->saveAs('uploads/' . $this->file->baseName . '.' . $this->file->extension);
+			$this->template = 'uploads/' . $this->file->baseName . '.' . $this->file->extension;
             return true;
         } else {
             return false;

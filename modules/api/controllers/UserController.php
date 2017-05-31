@@ -7,9 +7,10 @@ use yii\filters\auth\HttpBearerAuth;
 use app\models\User;
 use app\models\Customer;
 
+
 class UserController extends ActiveController
 {
-    public $modelClass = 'app\modules\api\models\APIUser';
+    public $modelClass = 'app\models\User';
 	
 	public function behaviors()
 	{
@@ -67,4 +68,5 @@ class UserController extends ActiveController
 			 return ['Error'];
 		} else {  return ['Error'];	}
 	}	
+
 }

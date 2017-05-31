@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\User;
-//use app\models\Customer;
+use app\models\Customer;
 use app\models\search\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -75,10 +75,10 @@ class UserController extends Controller
             $model->generateAuthKey();
 			if($model->save())
 			{
-				/* $customer = new Customer();
+			    $customer = new Customer();
 				$customer->eq_customer_id = $model->id;
 				$customer->created_at = date("Y-m-d H:i:s");  
-				$customer->save(); */
+				$customer->save(); 
 				
 				$model->sendEmailAddUser($model->id,$password);	
 			    Yii::$app->session->setFlash('user_create_success');
@@ -100,12 +100,12 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-       // $customer = Customer::find()->where(['eq_customer_id'=>$id])->one();
+        $customer = Customer::find()->where(['eq_customer_id'=>$id])->one();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			
-			/* $customer->updated_at = date("Y-m-d H:i:s");  			
-			$customer->save(); */
+			$customer->updated_at = date("Y-m-d H:i:s");  			
+			$customer->save(); 
 				
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -124,8 +124,8 @@ class UserController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-/* 		$customer = Customer::find()->where(['eq_customer_id'=>$id])->one();
-		$customer->delete(); */
+ 		$customer = Customer::find()->where(['eq_customer_id'=>$id])->one();
+		$customer->delete(); 
         return $this->redirect(['index']);
     }
 

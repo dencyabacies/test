@@ -9,7 +9,8 @@ use yii\widgets\ActiveForm;
 
 $roles=[
 	'admin'  =>'Admin',
-    'systemadmin'  =>'Systemadmin',
+    'system admin'  =>'System Admin',
+    'user'  =>'User',
 ];
 
 ?>

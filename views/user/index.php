@@ -10,7 +10,7 @@ use yii\grid\GridView;
 $this->title = 'Users';
 $this->params['breadcrumbs'][] = $this->title;
 
-$roles_array = array( 'admin'  =>'Admin', 'systemadmin'  =>'Systemadmin' );
+$roles_array = array( 'admin'  =>'Admin', 'system admin'  =>'System Admin', 'user'  =>'User');
 
 ?>
 <div class="user-index">
@@ -32,7 +32,7 @@ $roles_array = array( 'admin'  =>'Admin', 'systemadmin'  =>'Systemadmin' );
 			[
                 'attribute' => 'role',
                 'label' => 'Role',
-                'filter'=>Html::activeDropDownList($searchModel, 'role', $roles_array,['class'=>'form-control','prompt' => '--Select role--']),												
+                'filter'=>Html::activeDropDownList($searchModel, 'role', $roles_array,['class'=>'form-control','prompt' => '--Select Role--']),												
                 'value' => function ($model)use($roles_array){
                         return $roles_array[$model->role];
                 },			

@@ -2,10 +2,13 @@
 
 namespace app\modules\api\controllers;
 
+use Yii;
+use yii\data\ActiveDataProvider;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBearerAuth;
+use app\models\Dashboard as DashboardModel;
 
-class UserController extends ActiveController
+class DashboardController extends ActiveController
 {
     public $modelClass = 'app\models\Dashboard';
 	
@@ -28,8 +31,14 @@ class UserController extends ActiveController
 	/*
 	 * Test action for user endpoint
 	 */
-	public function actionTest(){
-		return ['hi'];
+	Public function actionIndex($page){
+        $query = DashboardModel::find();
+		$dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+		//$this->load($params);
+		return $dataProvider;
 	}
+	
 
 }

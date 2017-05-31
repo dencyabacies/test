@@ -35,6 +35,10 @@ class DashboardController extends ActiveController
         $query = DashboardModel::find();
 		$dataProvider = new ActiveDataProvider([
             'query' => $query,
+			'pagination' => [
+				'pageSize' => '10',
+				'page' => ($page-1),
+			],
         ]);
 		//$this->load($params);
 		return $dataProvider;

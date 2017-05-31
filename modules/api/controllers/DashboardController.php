@@ -5,7 +5,7 @@ namespace app\modules\api\controllers;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBearerAuth;
 
-class UserController extends ActiveController
+class DashboardController extends ActiveController
 {
     public $modelClass = 'app\models\Dashboard';
 	

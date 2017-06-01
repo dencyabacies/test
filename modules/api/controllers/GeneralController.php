@@ -11,19 +11,19 @@ use yii\filters\VerbFilter;
 class GeneralController extends ActiveController
 {
     public $modelClass = 'app\models\User';
-	
-	 public function behaviors()
+	 	
+    public function behaviors()
     {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'create-user' => ['POST'],
-                ],
-            ],
+                ],				
+            ],		
         ];
     }
-	
+	  
 	public function actions()
 	{
 		$actions = parent::actions();
@@ -37,6 +37,7 @@ class GeneralController extends ActiveController
 	 */
 
 	public function actionCreateUser(){	
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;		
 		if($_POST)
 		{
 			$model = new User();			

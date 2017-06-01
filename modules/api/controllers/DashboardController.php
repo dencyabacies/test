@@ -55,14 +55,14 @@ class DashboardController extends ActiveController
 	 */
 	Public function actionEmbed($id){
 		//Return, array of collection name,access key, workspace id, report id
-		$query 		= DashboardModel::findOne($id);
-		$workspace 	= WorkspaceModel::findOne($query->workspace_id);
-		$collection	= CollectionModel::findOne($workspace->collection_id);
-		  $embed = [
-			'collection_name'=>$collection->collection_name,
-			'access_key'	 =>$collection->AppKey,
-			'workspace_id'	 =>$query->workspace->workspace_id,
-			'report_id'	 	 =>$query->report->report_guid,
+		$dashboard 		= DashboardModel::findOne($id);
+		//$workspace 	= WorkspaceModel::findOne($dashboard->workspace_id);
+		//$collection	= CollectionModel::findOne($workspace->collection_id);
+		$embed = [
+			'collection_name'=>$dashboard->workspace->collection->collection_name,
+			'access_key'	 =>$dashboard->workspace->collection->AppKey,
+			'workspace_id'	 =>$dashboard->workspace->workspace_id,
+			'report_id'	 	 =>$dashboard->report->report_guid,
 		];  
 		return $embed;
 	}

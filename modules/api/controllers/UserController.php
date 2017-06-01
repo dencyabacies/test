@@ -47,7 +47,7 @@ class UserController extends ActiveController
 		
 		   return $datas;
 		}  
-		else {  return ['Error' => $model->getErrors()];	}   
+		else { return ['Error' => $model->getErrors()];	}   
 	} 
 	
 	public function actionDeleteUser(){				
@@ -58,7 +58,7 @@ class UserController extends ActiveController
 			if($customer->delete())
 			  return ['Success'];	
 		  }		  
-		 else { return ['Error' => $model->getErrors()];	}
+		 else { return ['Error' => $model->getErrors()]; }
 	}
 	
 	public function actionUpdateUser(){				

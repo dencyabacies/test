@@ -22,9 +22,9 @@ class APIUser extends User
     /**
      * @inheritdoc
      */
-    public static function findIdentityByAccessToken($token, $type = null)
+     public static function findIdentityByAccessToken($token, $type = null)
     {
-		return static::findOne(['access_token' => $token]);
-    }
+		return static::findOne(['auth_key' => $token]);
+    } 
 
 }

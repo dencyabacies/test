@@ -53,4 +53,34 @@ class DashboardController extends ActiveController
 	Public function actionEmbed($id){
 		//Return, array of collection name,access key, workspace id, report id
 	}
+	
+	/*
+	 * Action for importing data to the dashboard
+	 * Params: $dashboard_id,$cutomer_id , file to be imported
+	 * Returns Json
+	 */	
+	public function actionImport($dashboard_id){
+		
+		$model =  DashboardModel::findOne($dashboard_id);		
+		$model->file = UploadedFile::getInstanceByName('file');
+		//process excel
+		$data = \app\components\PBI_Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
+			'setFirstRecordAsKeys' => true, 
+			'setIndexSheetByName' => true, 
+		]);
+		//To remove empty sheets
+		$data=array_filter(array_map('array_filter', $data));
+		foreach($data as $key=>$sheet){
+			foreach($sheet as $header=>$data){
+				foreach($data as $key=>$d){
+					//eliminate the null keys
+					if($key == '')
+						unset($data[$key]);
+				}
+				$data['eq_customer_id'] = $_POST['customer_id'];
+				\Yii::$app->db->createCommand()
+					->insert($model->prefix."_".$key, $data)->execute();
+			} 		
+		}
+	}
 }

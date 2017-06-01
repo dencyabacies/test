@@ -7,6 +7,9 @@ use yii\data\ActiveDataProvider;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBearerAuth;
 use app\models\Dashboard as DashboardModel;
+use app\models\Workspace as WorkspaceModel;
+use app\models\Collection as CollectionModel;
+use app\models\Reports as ReportsModel;
 
 class DashboardController extends ActiveController
 {
@@ -52,6 +55,15 @@ class DashboardController extends ActiveController
 	 */
 	Public function actionEmbed($id){
 		//Return, array of collection name,access key, workspace id, report id
+		$query 		= DashboardModel::findOne($id);
+		$collection	= CollectionModel::findOne($workspace->collection_id);
+		  $embed = [
+			'collection_name'=>$collection->collection_name,
+			'access_key'	 =>$collection->AppKey,
+			'workspace_id'	 =>$query->workspace->workspace_id,
+			'report_id'	 	 =>$query->report->report_guid,
+		];  
+		return $embed;
 	}
 	
 	/*

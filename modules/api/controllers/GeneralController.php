@@ -33,30 +33,29 @@ class GeneralController extends ActiveController
 	}
 	
 	/*
-	 * Test action for user endpoint
+	 * Action for creating the user
+	 * POST 
+	 * Return JSON
 	 */
 
 	public function actionCreateUser(){	
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;		
-		if($_POST)
+		$model = new User();			
+		$model->username = $_POST['username'];
+		$model->email	 = $_POST['email'];
+		$model->role	 = 'user';
+		$password = $model->generateUniqueRandomString("username");
+		$model->setPassword($password);
+		$model->generateAuthKey();
+		if($model->save())
 		{
-			$model = new User();			
-			$model->username = $_POST['username'];
-			$model->email	 = $_POST['email'];
-			$model->role	 = $_POST['role'];
-			$password= $model->generateUniqueRandomString("username");
-			$model->setPassword($password);
-			$model->generateAuthKey();
-			if($model->save())
-			{
-			    $customer = new Customer();
-				$customer->eq_customer_id = $model->id;
-				$customer->created_at = date("Y-m-d H:i:s");  
-				$customer->save(); 
-				
-				$model->sendEmailAddUser($model->id,$password);	
-				return ['Success'];
-			} else {  return ['Error' => $model->getErrors()]; }		
-		} else {  return ['Error']; }		
+			$customer = new Customer();
+			$customer->eq_customer_id = $model->id;
+			$customer->created_at = date("Y-m-d H:i:s");  
+			if($customer->save()) 				
+				return ['auth_key'=>$model->auth_key];
+		} else { 
+			return ['Error' => $model->getErrors()]; 
+		}				
 	}	
 }

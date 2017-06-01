@@ -53,14 +53,14 @@ class UserController extends ActiveController
 		} else { return ['Error' => $model->getErrors()];	}
 	}
 	
-	public function actionUpdateUser($id){				
-		$model = User::findOne($id);
-		$customer = Customer::find()->where(['eq_customer_id'=>$id])->one();		
-		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
-		{			
-			$model->username = $_POST['username'];
+	public function actionUpdateUser(){				
+		$model = User::findOne(\Yii:$app->user->id);
+		$customer = Customer::find()->where(['eq_customer_id'=>\Yii:$app->user->id])->one();		
+/* 		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
+		{ */			
+			//$model->username = $_POST['username'];
 			$model->email = $_POST['email'];
-			$model->role = $_POST['role'];
+			//$model->role = $_POST['role'];
 			if($model->save())
 			{
 			  $customer->updated_at = date("Y-m-d H:i:s");
@@ -68,7 +68,7 @@ class UserController extends ActiveController
 			  return ['Success'];			  
 			} 	
 			 return ['Error' => $model->getErrors()];
-		} else {  return ['Error' => $model->getErrors()];	}
+		//} else {  return ['Error' => $model->getErrors()];	}
 	}	
 
 }

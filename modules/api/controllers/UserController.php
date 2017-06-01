@@ -35,40 +35,43 @@ class UserController extends ActiveController
 		return ['hi'];
 	}
 
-	public function actionViewUser($id){		
-		$model = User::findOne($id);	 
-		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
-		   return $model;
+	public function actionViewUser(){		
+		$model = User::findOne(\Yii::$app->user->id);	 
+		if($model)
+	    {
+			$datas = [
+			'username'=>$model->username,
+			'email'	 =>$model->email,
+			'role'	 =>$model->role,
+			];  
+		
+		   return $datas;
+		}  
 		else {  return ['Error' => $model->getErrors()];	}   
 	} 
 	
-	public function actionDeleteUser($id){				
-		$model = User::findOne($id);		
-		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
-		{			
-		  $model->delete();
- 		  $customer = Customer::find()->where(['eq_customer_id'=>$id])->one();
-		  $customer->delete(); 
-		  return ['Success'];		  
-		} else { return ['Error' => $model->getErrors()];	}
+	public function actionDeleteUser(){				
+		$model = User::findOne(\Yii::$app->user->id);							
+		  if($model->delete())
+		  {
+			$customer = Customer::find()->where(['eq_customer_id'=>\Yii::$app->user->id])->one();
+			if($customer->delete())
+			  return ['Success'];	
+		  }		  
+		 else { return ['Error' => $model->getErrors()];	}
 	}
 	
 	public function actionUpdateUser(){				
-		$model = User::findOne(\Yii:$app->user->id);
-		$customer = Customer::find()->where(['eq_customer_id'=>\Yii:$app->user->id])->one();		
-/* 		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
-		{ */			
-			//$model->username = $_POST['username'];
-			$model->email = $_POST['email'];
-			//$model->role = $_POST['role'];
+		$model = User::findOne(\Yii::$app->user->id);
+		$customer = Customer::find()->where(['eq_customer_id'=>\Yii::$app->user->id])->one();		
+		$model->email = $_POST['email'];
 			if($model->save())
 			{
 			  $customer->updated_at = date("Y-m-d H:i:s");
-			  $customer->save();
-			  return ['Success'];			  
+			  if($customer->save())
+				return ['Success'];			  
 			} 	
-			 return ['Error' => $model->getErrors()];
-		//} else {  return ['Error' => $model->getErrors()];	}
+			else { return ['Error' => $model->getErrors()]; }
 	}	
 
 }

@@ -10,6 +10,7 @@ use app\models\Dashboard as DashboardModel;
 use app\models\Workspace as WorkspaceModel;
 use app\models\Collection as CollectionModel;
 use app\models\Reports as ReportsModel;
+use yii\web\UploadedFile;
 
 class DashboardController extends ActiveController
 {
@@ -56,8 +57,6 @@ class DashboardController extends ActiveController
 	Public function actionEmbed($id){
 		//Return, array of collection name,access key, workspace id, report id
 		$dashboard 		= DashboardModel::findOne($id);
-		//$workspace 	= WorkspaceModel::findOne($dashboard->workspace_id);
-		//$collection	= CollectionModel::findOne($workspace->collection_id);
 		$embed = [
 			'collection_name'=>$dashboard->workspace->collection->collection_name,
 			'access_key'	 =>$dashboard->workspace->collection->AppKey,
@@ -74,8 +73,10 @@ class DashboardController extends ActiveController
 	 */	
 	public function actionImport($dashboard_id){
 		
-		$model =  DashboardModel::findOne($dashboard_id);		
+		$model =  DashboardModel::findOne($dashboard_id);
+		//print_r($_FILES['file']);die;
 		$model->file = UploadedFile::getInstanceByName('file');
+		$model->file->saveAs(\Yii::$app->basePath."/web/uploads/" . $model->file->baseName . '.' . $model->file->extension);
 		//process excel
 		$data = \app\components\PBI_Excel::import(\Yii::$app->basePath."/web/uploads/". $model->file->baseName . '.' . $model->file->extension, [
 			'setFirstRecordAsKeys' => true, 
@@ -85,10 +86,10 @@ class DashboardController extends ActiveController
 		$data=array_filter(array_map('array_filter', $data));
 		foreach($data as $key=>$sheet){
 			foreach($sheet as $header=>$data){
-				foreach($data as $key=>$d){
+				foreach($data as $column=>$d){
 					//eliminate the null keys
 					if($key == '')
-						unset($data[$key]);
+						unset($data[$column]);
 				}
 				$data['eq_customer_id'] = $_POST['customer_id'];
 				\Yii::$app->db->createCommand()

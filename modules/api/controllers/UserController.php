@@ -39,7 +39,7 @@ class UserController extends ActiveController
 		$model = User::findOne($id);	 
 		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
 		   return $model;
-		else {  return ['Error'];	}   
+		else {  return ['Error' => $model->getErrors()];	}   
 	} 
 	
 	public function actionDeleteUser($id){				
@@ -50,23 +50,25 @@ class UserController extends ActiveController
  		  $customer = Customer::find()->where(['eq_customer_id'=>$id])->one();
 		  $customer->delete(); 
 		  return ['Success'];		  
-		} else {  return ['Error'];	}
+		} else { return ['Error' => $model->getErrors()];	}
 	}
 	
-	public function actionUpdateUser($id){				
-		$model = User::findOne($id);
-		$customer = Customer::find()->where(['eq_customer_id'=>$id])->one();		
-		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
-		{			
-			$model->role = $_POST['role'];
+	public function actionUpdateUser(){				
+		$model = User::findOne(\Yii:$app->user->id);
+		$customer = Customer::find()->where(['eq_customer_id'=>\Yii:$app->user->id])->one();		
+/* 		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
+		{ */			
+			//$model->username = $_POST['username'];
+			$model->email = $_POST['email'];
+			//$model->role = $_POST['role'];
 			if($model->save())
 			{
 			  $customer->updated_at = date("Y-m-d H:i:s");
 			  $customer->save();
 			  return ['Success'];			  
 			} 	
-			 return ['Error'];
-		} else {  return ['Error'];	}
+			 return ['Error' => $model->getErrors()];
+		//} else {  return ['Error' => $model->getErrors()];	}
 	}	
 
 }

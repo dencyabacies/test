@@ -39,7 +39,7 @@ class UserController extends ActiveController
 		$model = User::findOne($id);	 
 		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
 		   return $model;
-		else {  return ['Error'];	}   
+		else {  return ['Error' => $model->getErrors()];	}   
 	} 
 	
 	public function actionDeleteUser($id){				
@@ -50,7 +50,7 @@ class UserController extends ActiveController
  		  $customer = Customer::find()->where(['eq_customer_id'=>$id])->one();
 		  $customer->delete(); 
 		  return ['Success'];		  
-		} else {  return ['Error'];	}
+		} else { return ['Error' => $model->getErrors()];	}
 	}
 	
 	public function actionUpdateUser($id){				
@@ -65,8 +65,8 @@ class UserController extends ActiveController
 			  $customer->save();
 			  return ['Success'];			  
 			} 	
-			 return ['Error'];
-		} else {  return ['Error'];	}
+			 return ['Error' => $model->getErrors()];
+		} else {  return ['Error' => $model->getErrors()];	}
 	}	
 
 }

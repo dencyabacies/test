@@ -56,7 +56,7 @@ class GeneralController extends ActiveController
 				
 				$model->sendEmailAddUser($model->id,$password);	
 				return ['Success'];
-			} else {  return ['Error']; }		
+			} else {  return ['Error' => $model->getErrors()]; }		
 		} else {  return ['Error']; }		
 	}	
 }

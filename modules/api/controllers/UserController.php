@@ -58,6 +58,8 @@ class UserController extends ActiveController
 		$customer = Customer::find()->where(['eq_customer_id'=>$id])->one();		
 		if(($model) && ($model->access_token  == \Yii::$app->user->identity->access_token))
 		{			
+			$model->username = $_POST['username'];
+			$model->email = $_POST['email'];
 			$model->role = $_POST['role'];
 			if($model->save())
 			{

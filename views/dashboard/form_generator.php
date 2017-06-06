@@ -169,13 +169,21 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 	//accordian plus minus icon
 
 	$(document).ready(function () {
-
-		$('.collapse').on('shown.bs.collapse', function(){
-			$(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-		}).on('hidden.bs.collapse', function(){
-			$(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
-		});
-
+		 $('.collapse').on('shown.bs.collapse', function(){
+			 
+			//$(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+			
+			 var id = $(this).attr("id");			 
+			 $("#header_"+id).find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+						
+			}).on('hidden.bs.collapse', function(){
+				
+			//$(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+			
+			var id = $(this).attr("id");			 
+			$("#header_"+id).find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+						
+			}); 
 	});
 
 

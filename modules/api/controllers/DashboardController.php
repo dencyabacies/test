@@ -97,4 +97,31 @@ class DashboardController extends ActiveController
 			} 		
 		}
 	}
+	
+	
+	/*
+	 * Action for getting update dashboard Form Generator Details
+	 * Params: $value which is the dashboard Form Generator value
+	 * Returns JSON
+	 */
+	Public function actionUpdateFormGenerator(){
+		$tableSchema = Yii::$app->db->schema->getTableSchema('2_Risk');
+		if ($tableSchema === null) {
+			return ["Error"=>"Table Does Not Exits"];			
+		} else {
+			return ["Success"=>"Success Table processed"];
+			
+		}
+	}
+	Public function actionDeleteFormGenerator(){
+		$tablename = "2_Risk";
+		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
+		if ($tableSchema === null) {
+			return ["Error"=>"Table Does Not Exits"];			
+		} else {
+			$columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
+			return $columnNames;
+		}
+
+	}
 }

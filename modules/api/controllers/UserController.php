@@ -37,7 +37,7 @@ class UserController extends ActiveController
 
 	/*
 	 * Action for View Authorizated user Details
-	 * POST 
+	 * GET 
 	 * Return JSON
 	 */
 	 
@@ -58,7 +58,7 @@ class UserController extends ActiveController
 	
 	/*
 	 * Action for Authorizated user Can Deleted
-	 * POST 
+	 * GET 
 	 * Return JSON
 	 */
 	 
@@ -95,7 +95,7 @@ class UserController extends ActiveController
 	
 	/*
 	 * Action for View User Details By Admin User
- 	 * POST 
+ 	 * GET 
 	 * Return JSON
 	 */
 	 
@@ -121,7 +121,7 @@ class UserController extends ActiveController
 	
 	/*
 	 * Action for User Can Deleted By Admin User
-	 * POST 
+	 * GET 
 	 * Return JSON
 	 */
 	 

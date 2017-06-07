@@ -90,6 +90,7 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 							<option value="textarea" <?= $field['field_type']=='textarea'?"selected":"" ?>>Text Area</option> <!-- No Secondary Options -->
 							<option value="date-input" <?= $field['field_type']=='date-input'?"selected":"" ?>>Date Input</option> 
 							<option value="dropdown" <?= $field['field_type']=='dropdown'?"selected":"" ?>>DropDown List</option>
+							<option value="radio-button" <?= $field['field_type']=='radio-button'?"selected":"" ?>>Radio Button</option>
 							<option value="default-value">Text Input with Default value</option>
 						  </select>
 						</div>
@@ -118,6 +119,11 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 							<div class="form-group default-value" id="<?=$identifier?>_default-value" <?= $field['field_type']=='default-value'?"style='display:block'":"" ?>>
 							  <label for="default-value">Default Value</label>
 							  <input type="text" class="form-control" id="id-default-value" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][options][default_text]" value="<?=$field['options']['default_text']?>">
+							</div>
+							
+							<div class="form-group radio-button" id="<?=$identifier?>_radio-button" <?=$field['field_type']=='radio-button'?"style='display:block'":"" ?>>
+							  <label for="radio-button">Radio Button</label>
+							  <input type="radio" class="form-control" id="id-radio-button" name="tables[<?=$tab_name?>][fields][<?=$f_index?>][options][radio-button]" value="<?=$field['options']['radio-button']?>">
 							</div>
 
 							
@@ -187,8 +193,8 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 			
 			var selectedValue = $(this).val();
 			var selectedField = $(this).attr("id");
-			var all_options = "#"+selectedField+"_d-format, #"+selectedField+"_column-dropdown, #"+selectedField+"_default-value, #"+selectedField+"_hidden-with";
-			
+			var all_options = "#"+selectedField+"_d-format, #"+selectedField+"_column-dropdown, #"+selectedField+"_default-value, #"+selectedField+"_hidden-with, #"+selectedField+"_radio-button";
+						
 			if(selectedValue == "date-input"){
 				$(all_options).hide();
 				$("#"+selectedField+"_d-format").show();
@@ -200,6 +206,10 @@ $this->title = 'Form-Generator:'.$model->dashboard_name;
 			else if(selectedValue == "default-value"){
 				$(all_options).hide();
 				$("#"+selectedField+"_default-value").show();
+			}
+			else if(selectedValue == "radio-button"){
+				$(all_options).hide();
+				$("#"+selectedField+"_radio-button").show();
 			}
 			else{
 				$(all_options).hide();

@@ -107,6 +107,7 @@ class DashboardController extends ActiveController
 	 * Params: $value which is the dashboard Form Generator value
 	 * Returns JSON
 	 */
+	 // Pending Function
 	Public function actionUpdateFormGenerator(){
 		$tablename = "2_Risk";
 		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
@@ -123,15 +124,15 @@ class DashboardController extends ActiveController
 	 * Params: $value which is the dashboard Form Generator value
 	 * Returns JSON
 	 */
-	 
+	// Pending Function
 	Public function actionDeleteFormGenerator(){
 		$tablename = "2_Risk";
 		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
 		if ($tableSchema === null) {
 			return ["Error"=>"Table Does Not Exits"];			
 		} else {
-			/* $columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
-			return $columnNames; */
+			$columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
+			return $columnNames; 
 			
 		}
 

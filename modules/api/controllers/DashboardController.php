@@ -175,15 +175,16 @@ class DashboardController extends ActiveController
 	public function actionCancelSubscription($subid){	
 				
 		$model =  SubscriptionModel::find()->where(['eq_customer_id'=>\Yii::$app->user->id,'subscription_id'=>$subid])->One();
-		$model->created_at = date("Y-m-d H:i:s");
-		$model->status = 2;
-			if($model->save())
-			{
-			return ['Success' => "Subscription Is Cancelled To This User Successfully"];			  
-			}
-			else { 
-			return ['Error' => $model->getErrors()]; 
-			}
+		//$model->created_at = date("Y-m-d H:i:s");
+		//$model->status = 2;
+		if($model)
+		{
+		  $model->delete();	
+		  return ['Success' => "Subscription Is Cancelled To This User Successfully"];			  
+		}
+		else { 
+		  return ['Error' => $model->getErrors()]; 
+		}
 	  		
 	}	
 	

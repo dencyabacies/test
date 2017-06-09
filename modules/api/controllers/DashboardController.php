@@ -109,11 +109,28 @@ class DashboardController extends ActiveController
 	 */
 	 // Pending Function
 	Public function actionUpdateFormGenerator(){
+		
 		$tablename = "2_Risk";
 		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
 		if ($tableSchema === null) {
 			return ["Error"=>"Table Does Not Exits"];			
 		} else {
+			/* $columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
+			return $columnNames;  */
+			
+			$newcpy_blockid = 10;
+
+			
+			
+			$data['Risk Score'] = 21700;
+			
+			
+			$connection = Yii::$app->getDb(); 
+			$connection	->createCommand()
+			->update($tablename,$data, "eq_id=".$newcpy_blockid." and eq_customer_id=".\Yii::$app->user->id)
+			->execute();
+			
+			//21700
 			return ["Success"=>"Success Table processed"];
 			
 		}
@@ -131,9 +148,17 @@ class DashboardController extends ActiveController
 		if ($tableSchema === null) {
 			return ["Error"=>"Table Does Not Exits"];			
 		} else {
-			$columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
-			return $columnNames; 
+			/* $columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
+			return $columnNames;  */
 			
+			$newcpy_blockid = 8;
+			
+			$connection = Yii::$app->getDb(); 
+			$connection	->createCommand()
+			->delete($tablename,  "eq_id=".$newcpy_blockid." and eq_customer_id=".\Yii::$app->user->id)
+			->execute();
+			
+			return ["Success"=>"Success Table processed"];
 		}
 
 	}

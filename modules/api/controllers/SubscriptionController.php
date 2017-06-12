@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use Yii;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBearerAuth;
+use app\models\User;
 use app\models\Subscription as SubscriptionModel;
 
 class SubscriptionController extends ActiveController
@@ -101,7 +102,10 @@ class SubscriptionController extends ActiveController
 	 * Return JSON
 	 */
 	 
-	public function actionDashboardSubscription($id){					
+	public function actionDashboardSubscription($id){
+	$model_check = User::findOne(\Yii::$app->user->id);
+	  if($model_check->role == "admin")
+	  {			
 		$model =  SubscriptionModel::find()->where(['dashboard_id'=>$id,'status'=>1])->All();	
 		if($model)
 		{
@@ -109,6 +113,27 @@ class SubscriptionController extends ActiveController
 		}
 		else { 
 		   return ['Error' => $model->getErrors()]; 
-		}	  		
+		}
+		}  
+		else { return ['Error' => "Access Denied"];	}  		
 	}
+	
+	/*
+	 * Action for subscription status of a dashboard for  a particular user 
+	 * value is Dashboard Id 
+	 * Return True Or False 
+	 */
+	 
+	public function actionSubscriptionStatus($id){	
+	
+		$model =  SubscriptionModel::find()->where(['dashboard_id'=>$id,'eq_customer_id'=>\Yii::$app->user->id,'status'=>1])->One();	
+		if($model)
+		{
+		   return True;			  
+		}
+		else { 
+		   return False;		 
+		}  		
+	}
+	
 }

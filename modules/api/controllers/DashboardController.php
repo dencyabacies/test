@@ -10,7 +10,6 @@ use app\models\Dashboard as DashboardModel;
 use app\models\Workspace as WorkspaceModel;
 use app\models\Collection as CollectionModel;
 use app\models\Reports as ReportsModel;
-use app\models\Subscription as SubscriptionModel;
 use yii\web\UploadedFile;
 use app\models\User;
 use app\models\Customer;

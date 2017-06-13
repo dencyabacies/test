@@ -100,7 +100,6 @@ class DashboardController extends ActiveController
 		}
 	}
 	
-	
 	/*
 	 * Action for getting update dashboard Form Generator Details
 	 * Params: $value which is the dashboard Form Generator value
@@ -109,29 +108,37 @@ class DashboardController extends ActiveController
 	 // Pending Function
 	Public function actionUpdateFormGenerator(){
 		
-		$tablename = "2_Risk";
+		$tablename = $_POST['tablename'];
 		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
 		if ($tableSchema === null) {
 			return ["Error"=>"Table Does Not Exits"];			
-		} else {
-			/* $columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
-			return $columnNames;  */
+		} else {					
+			$eq_id = json_decode($_POST['eq_id'],true);
+			$column_value = json_decode($_POST['column_value'],true);
 			
-			$newcpy_blockid = 10;
+			if(!empty($eq_id) && is_array($eq_id))
+			{
+				$connection = Yii::$app->getDb();
+				$checkststus = false;
+				unset($data);
 
-			
-			
-			$data['Risk Score'] = 21700;
-			
-			
-			$connection = Yii::$app->getDb(); 
-			$connection	->createCommand()
-			->update($tablename,$data, "eq_id=".$newcpy_blockid." and eq_customer_id=".\Yii::$app->user->id)
-			->execute();
-			
-			//21700
-			return ["Success"=>"Success Table processed"];
-			
+				foreach($eq_id as $key1=>$tmp)
+				{					
+				 $data = $column_value[$key1];
+				 
+				   $connection	->createCommand()
+					->update($tablename,$data, "eq_id=".$tmp." and eq_customer_id=".\Yii::$app->user->id)
+					->execute();
+				  $checkststus = true;	 
+				}
+				
+				if($checkststus == true)
+					return ["Success"=>"Successfully Updated Corresponding Rows In Table"];
+			} 
+			else 
+			{
+				return ["Error"=>"Something Went To Wrong Try Again"];
+			}			
 		}
 	}
 	
@@ -142,22 +149,32 @@ class DashboardController extends ActiveController
 	 */
 	// Pending Function
 	Public function actionDeleteFormGenerator(){
-		$tablename = "2_Risk";
+		$tablename = $_POST['tablename'];
 		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
 		if ($tableSchema === null) {
 			return ["Error"=>"Table Does Not Exits"];			
 		} else {
-			/* $columnNames = Yii::$app->db->schema->getTableSchema($tablename)->getColumnNames();		
-			return $columnNames;  */
+						
+			$eq_id = json_decode($_POST['eq_id'],true);
 			
-			$newcpy_blockid = 8;
-			
-			$connection = Yii::$app->getDb(); 
-			$connection	->createCommand()
-			->delete($tablename,  "eq_id=".$newcpy_blockid." and eq_customer_id=".\Yii::$app->user->id)
-			->execute();
-			
-			return ["Success"=>"Success Table processed"];
+			if(!empty($eq_id) && is_array($eq_id))
+			{
+				$connection = Yii::$app->getDb();
+				$checkststus = false;	
+				foreach($eq_id as $tmp)
+				{
+				  $connection	->createCommand()
+					->delete($tablename,  "eq_id=".$tmp." and eq_customer_id=".\Yii::$app->user->id)
+					->execute();
+				  $checkststus = true;		
+				}
+				if($checkststus == true)
+					return ["Success"=>"Successfully Deleted Corresponding Rows In Table"];
+			} 
+			else 
+			{
+				return ["Error"=>"Something Went To Wrong Try Again"];
+			}			
 		}
 
 	}

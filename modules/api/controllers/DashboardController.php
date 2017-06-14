@@ -106,7 +106,7 @@ class DashboardController extends ActiveController
 	 * Returns JSON
 	 */
 	 // Pending Function
-	Public function actionUpdateFormGenerator(){
+	Public function actionUpdateDashboardData(){
 		
 		$tablename = $_POST['tablename'];
 		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
@@ -133,7 +133,7 @@ class DashboardController extends ActiveController
 				}
 				
 				if($checkststus == true)
-					return ["Success"=>"Successfully Updated Corresponding Rows In Table"];
+					return ["Success"=>"Successfully Updated Corresponding Values On Dashboard"];
 			} 
 			else 
 			{
@@ -148,7 +148,7 @@ class DashboardController extends ActiveController
 	 * Returns JSON
 	 */
 	// Pending Function
-	Public function actionDeleteFormGenerator(){
+	Public function actionDeleteDashboardData(){
 		$tablename = $_POST['tablename'];
 		$tableSchema = Yii::$app->db->schema->getTableSchema($tablename);
 		if ($tableSchema === null) {
@@ -169,7 +169,7 @@ class DashboardController extends ActiveController
 				  $checkststus = true;		
 				}
 				if($checkststus == true)
-					return ["Success"=>"Successfully Deleted Corresponding Rows In Table"];
+					return ["Success"=>"Successfully Deleted Corresponding values On Dashboard"];
 			} 
 			else 
 			{
